@@ -1,0 +1,96 @@
+<?php
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-alcalinidad">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+
+      <th class="text-center">VOLUMEN<br>MUESTRA (mL)</th>
+      <th class="text-center">VOLUMEN H2SO4<br>GASTADO (mL)</th>
+      <th class="text-center">NORMALIDAD<br>H2SO4</th>
+      <th class="text-center">PESO Eq - g<br>CaCO3</th>
+      <th class="text-center">FACTOR DE<br>CONVERSIÓN (g - mg)</th>
+      <th class="text-center">ALCALINIDAD<br>(mgCaCO3/L)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td class="text-center"><?php echo $constantes[0]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Alcalinidad_$indicador",
+            "class='form-control fullwidth alcalinidad-input' placeholder='Volumen $indicador (mL)'"
+        )?></td>
+        <td class="text-center"><?php echo $constantes[1]->valor ?></td>
+        <td class="text-center"><?php echo $constantes[2]->valor ?></td>
+        <td class="text-center"><?php echo $constantes[3]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Alcalinidad_Out_$indicador",
+            "class='form-control fullwidth alcalinidad-out' readonly placeholder='Alcalinidad $indicador (mgCaCO3/L)'"
+        )?></td>
+      </tr>
+    <?php endforeach ?>
+    <tr>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  $('.alcalinidad-input').on('keyup', function(e) {
+    CalcularAlcalinidad($(this));
+  });
+
+  $('.alcalinidad-input').on('change', function(e) {
+    CalcularAlcalinidad($(this));
+  });
+
+  function CalcularAlcalinidad(input) {
+    var indicador = input.attr('id').split('_')[1];
+    var inputOut  = $(['#Alcalinidad_Out', indicador].join('_'));
+
+    var I = GetValue(input.parents()[1], 1);
+    var J = input.val();
+    var K = GetValue(input.parents()[1], 3);
+    var L = GetValue(input.parents()[1], 4);
+    var M = GetValue(input.parents()[1], 5);
+
+    inputOut.val(J*K*L*M/I);
+  }
+
+  function GenerateJsonAlcalinidad(muestra_id) {
+    var tr = $('#table-alcalinidad tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.valor1        = $(GetCell(tr, 2).children()[0]).val();
+    data.resultado     = $(GetCell(tr, 6).children()[0]).val();
+    data.tipoensayo_id = 3;
+
+    return data;
+  }
+</script>

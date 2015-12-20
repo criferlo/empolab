@@ -1,0 +1,155 @@
+<?php
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-alcalinidad-rango-bajo">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+
+      <th class="text-center">VOLUMEN<br>MUESTRA (mL)</th>
+      <th class="text-center">PH INICIAL</th>
+      <th class="text-center">PH FINAL</th>
+      <th class="text-center">VOLUMEN 1<br>H2SO4 GASTADO (mL)</th>
+      <th class="text-center">VOLUMEN 2<br>H2SO4 GASTADO (mL)</th>
+      <th style="display: none;">NORMALIDAD<br>H2SO4</th>
+      <th style="display: none;">FACTOR DE CONVERSIÓN<br>(eqCaCO3/L - gCaCO3/L)</th>
+      <th style="display: none;">FACTOR DE CONVERSIÓN<br>(g - mg)</th>
+      <th class="text-center">ALCALINIDAD<br>(mgCaCO3/L)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td class="text-center"><?php echo $constantes[0]->valor ?></td>
+        <td><?php 
+        
+        //criferlo
+        $mmc = new Muestramemoriacalculo();
+        $xarr = array();
+        $xarr = $mmc->find("muestra_id=".$ms->id);
+        $xvalor1=0;    
+        $xvalor2=0;  
+        $xvalor3=0;  
+        $xvalor4=0;  
+        
+        $xresultado=0;
+        
+        //Flash::info($ms->id);                
+        
+        foreach($xarr as $xobj){
+            if($xobj->tipoensayo_id=="46"){
+                $xvalor1= $xobj->valor1;
+                $xvalor2= $xobj->valor2;
+                $xvalor3= $xobj->valor3;
+                $xvalor4= $xobj->valor4;
+                $xresultado = $xobj->resultado;
+                break;
+            }
+        }
+        //criferlo
+        
+        echo
+        Form::number(
+            "Alcalinidad_RB_PHI_$indicador",
+            "class='form-control fullwidth alcalinidad-rb-input' placeholder='PH Inicial $indicador'",
+                $xvalor1
+        )?></td>
+        <td><?php echo
+        Form::number(
+            "Alcalinidad_RB_PHF_$indicador",
+            "class='form-control fullwidth alcalinidad-rb-input' placeholder='PH Final $indicador'",
+                $xvalor2
+        )?></td>
+        <td><?php echo
+        Form::number(
+            "Alcalinidad_RB_V1_$indicador",
+            "class='form-control fullwidth alcalinidad-rb-input' placeholder='Volumen 1 $indicador (mL)'",
+                $xvalor3
+        )?></td>
+        <td><?php echo
+        Form::number(
+            "Alcalinidad_RB_V2_$indicador",
+            "class='form-control fullwidth alcalinidad-rb-input' placeholder='Volumen 2 $indicador (mL)'",
+                $xvalor4
+        )?></td>
+        <td style="display: none;"><?php echo $constantes[1]->valor ?></td>
+        <td style="display: none;"><?php echo $constantes[2]->valor ?></td>
+        <td style="display: none;"><?php echo $constantes[3]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Alcalinidad_RB_Out_$indicador",
+            "class='form-control fullwidth alcalinidad-rb-out' readonly placeholder='Alcalinidad Rango Bajo $indicador (mgCaCO3/L)'",
+                $xresultado
+        )?></td>
+      </tr>
+    <?php endforeach ?>
+    <tr>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  $('.alcalinidad-rb-input').on('keyup', function(e) {
+    CalcularAlcalinidadRangoBajo($(this));
+  });
+
+  $('.alcalinidad-rb-input').on('change', function(e) {
+    CalcularAlcalinidadRangoBajo($(this));
+  });
+
+  function CalcularAlcalinidadRangoBajo(input) {
+    var indicador = input.attr('id').split('_')[3];
+    var inputOut  = $(['#Alcalinidad_RB_Out', indicador].join('_'));
+
+    var I = GetValue(input.parents()[1], 1);
+
+    var J = GetCell(input.parents()[1], 2).children().val();
+    var K = GetCell(input.parents()[1], 3).children().val();
+    var L = GetCell(input.parents()[1], 4).children().val();
+    var M = GetCell(input.parents()[1], 5).children().val();
+
+    var N = GetValue(input.parents()[1], 6);
+    var O = GetValue(input.parents()[1], 7);
+    var P = GetValue(input.parents()[1], 8);
+    var Q = GetValue(input.parents()[1], 9);
+
+    inputOut.val(((2*L-M)*N*O*P)/I);
+  }
+
+  function GenerateJsonAlcalinidadRangoBajo(muestra_id) {
+    var tr = $('#table-alcalinidad-rango-bajo tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.valor1        = $(GetCell(tr, 2).children()[0]).val();
+    data.valor2        = $(GetCell(tr, 3).children()[0]).val();
+    data.valor3        = $(GetCell(tr, 4).children()[0]).val();
+    data.valor4        = $(GetCell(tr, 5).children()[0]).val();
+    data.resultado     = $(GetCell(tr, 9).children()[0]).val();
+    data.tipoensayo_id = 46;
+
+    return data;
+  }
+</script>

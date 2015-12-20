@@ -1,0 +1,13 @@
+.cuadrologin
+{
+    background-color: #0C3757;
+    height: 500px;
+    width: 400px;
+    padding: 1px;
+    /*para Firefox*/
+    -moz-border-radius: 15px 15px 15px 15px;
+    /*para Safari y Chrome*/
+    -webkit-border-radius: 15px 15px 15px 15px;
+    /* para Opera */
+    border-radius: 15px 15px 15px 15px;
+}

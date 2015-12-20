@@ -1,0 +1,23 @@
+<div class="container-fluid">
+    <? echo Form::open("home/cabecera", "POST") ?>
+
+
+    <div class="col-sm-12 centrar">
+   
+    <div class="col-sm-10 divSeleccionarTipoCliente">
+   
+        <div class="col-sm2"><? echo Html::img("usuario.png", "class='imagenUsuario'")?></div>
+        <h2 class="letrasBlancas">Seleccionar el tipo de cliente</h2>        
+        <div class="col-sm-5 nofloat" style="margin-top: 2%"><? echo Form::dbSelect("tipocliente.tipocliente_id", "nombre", null, null, "class='combosGeneral'") ?> </div>       
+        <div class="clearfix"></div>
+        <div class="col-sm-5 nofloat" style="margin-top: 2%"><button type="button" class="btn btn-primary active botones" >ACEPTAR</button></div>
+    </div>
+
+
+
+
+
+
+    <? echo Form::close() ?>    
+</div>
+    </div>

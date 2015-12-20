@@ -1,0 +1,59 @@
+<?echo View::content()?>
+<div class="container-fluid">
+    <? echo Form::open("", "POST") ?>
+    <div class="panel panel-success panelModulosUsuarios" style="margin-top: 3%">
+                     <div class="panel-heading titulopanelModulosUsuarios">Seleccion de Modulos para usuarios</div>
+                    <div class="panel-body">
+                <div class="col-sm-12">  
+                    <div class="table-responsive">        
+                        <table class="tablaModuloUsuario">
+                            <tr style="background-color: #A5D6A7">
+                                <th class="thTablasTituloIndex">NOMBRE DE MODULO</th>
+                                <th class="thTablasTituloIndex">SELECCIONAR</th>
+                            </tr>
+                            <tbody>
+                                <? foreach ($modulos as $modulo) { ?>
+                                    <tr>
+
+                                        <th class="thTablasVerdes"><? echo $modulo->nombremodulo ?></th> 
+                                        <th class="thTablasVerdes"><?echo Form::check("modulo".$modulo->id, $modulo->id,null,null)?> </th>
+                                         
+                                    <? } ?> 
+                                <? echo Form::hidden('idusuario',null, $idusuario)  ?>                     
+
+                                </tr>
+                            </tbody>
+                        </table></div>
+                    
+                    <div class="col-sm-6"><input type="submit" style="margin-left: 55%; margin-top: 5%;" id="btnmodificarperfil" value="Guardar Modulos" class="top-buffer form-control btn btn-info"/>  </div>
+                  
+                        </div><br>
+                       </div>
+                        </div><br><br>
+    
+                        <div class="col-sm-12" style="text-align: center;"><h4>MODULOS ASIGNADOS AL USUARIO </h4></div> <div class="clearfix"></div>
+                       <div class="table-responsive" style="padding-bottom: 5%">        
+                            <table class="tablaModuloUsuario" >
+                            <tr style="background-color: #A5D6A7">
+                                <th class="thTablasTituloIndex">USUARIO</th>
+                                <th class="thTablasTituloIndex">NOMBRE DE MODULO</th>
+                                <th class="thTablasTituloIndex" colspan="2">OPCIONES</th> 
+                            </tr>
+                            <tbody>
+                                <? foreach ($modulosusuario as $modulo) { ?>
+                                    <tr>
+                                        <th class="thTablasVerdes"><? echo $modulo->usuarionombre ?></th> 
+                                        <th class="thTablasVerdes"><? echo $modulo->nombre ?></th> 
+                                        <th class="thTablasVerdes">
+                                        <? echo Html::linkAction("eliminarmodulousuario/$modulo->identificador" , "Eliminar", "class='btn btn-default btn-sm'") ?></th>
+                                         
+                                    <? } ?> 
+                                             
+
+                                </tr>
+                            </tbody>
+                        </table></div>
+    
+
+<?echo Form::close()?>
+  </div>

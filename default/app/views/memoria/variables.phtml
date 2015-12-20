@@ -1,0 +1,29 @@
+<div class="container container-fluid">
+  <?php echo Form::open(null, "POST") ?>
+    <?php foreach ($tiposEnsayo as $te): ?>
+      <?php $constantes = $te->getConstantetipoensayo();  ?>
+      <?php if (isset($constantes) && count($constantes) > 0): ?>
+        <article class="panel panel-primary">
+          <header class="panel-heading">
+            <h4 class="panel-title"><?php echo $te->nombre ?></h4>
+          </header>
+          <section class="panel-body">
+            <div class="row">
+              <?php foreach ($constantes as $const): ?>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label><?php echo $const->nombre ?></label>
+                    <?php echo Form::text("const_".$const->id, "class='form-control'", $const->valor) ?>
+                  </div>
+                </div>
+              <?php endforeach ?>
+            </div>
+          </section>
+        </article>
+      <?php endif ?>
+    <?php endforeach ?>
+    <br>
+    <input type="submit" class="btn btn-primary pull-right" value="Guardar variables">
+  <?php echo Form::close() ?>
+  <br><br><br><br>
+</div>

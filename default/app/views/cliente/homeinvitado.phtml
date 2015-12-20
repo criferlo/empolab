@@ -1,0 +1,9 @@
+<?
+
+$usu_id = Session::get("usuario_id");
+$usu = new Usuario();
+$usu->find_first($usu_id);
+$cli = new Cliente();
+$cli->find_first("nit=".$usu->cedula);
+echo Html::link("formato/lista_reporte/".$cli->id,"Ver reportes","class='btn btn-success' data-toggle='tooltip' data-placement='left'")
+        ?>

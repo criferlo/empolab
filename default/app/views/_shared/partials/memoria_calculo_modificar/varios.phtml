@@ -1,0 +1,125 @@
+<?php
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-varios">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+
+      <th class="text-center">CALCIO</th>
+      <th class="text-center">DUREZA MAGNESIO</th>
+      <th class="text-center">MAGNESIO</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-indicador="<?php echo $indicador ?>" data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td><?php echo
+        Form::number(
+            "Calcio_Out_$indicador",
+            "class='form-control fullwidth calcio-out' readonly placeholder='Calcio $indicador'"
+        )?></td>
+        <td><?php echo
+        Form::number(
+            "Dureza_Magnesio_Out_$indicador",
+            "class='form-control fullwidth dureza-magnesio-out' readonly placeholder='Dureza Magnesio $indicador'"
+        )?></td>
+        <td><?php echo
+        Form::number(
+            "Magnesio_Out_$indicador",
+            "class='form-control fullwidth magnesio-out' readonly placeholder='Magnesio $indicador'"
+        )?></td>
+      </tr>
+    <?php endforeach ?>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  $(function() {
+    CalcularVarios();
+  });
+
+  function CalcularVarios() {
+    var params = {
+      CALCIO_C1: <?php echo $constantes[0]->valor ?>,
+      CALCIO_C2: <?php echo $constantes[1]->valor ?>,
+      MAGNESIO_C1: <?php echo $constantes[2]->valor ?>,
+      MAGNESIO_C2: <?php echo $constantes[3]->valor ?>
+    };
+
+    [].forEach.call($("#table-varios").find('tbody tr'), function(item) {
+      var indicador           = $(item).data("indicador");
+      var durezaCalcicaInput  = $(['#Dureza_Calcica_Out', indicador].join('_'));
+      var durezaTotalInput    = $(['#Dureza_Total_Out', indicador].join('_'));
+      var calcioInput         = $(['#Calcio_Out', indicador].join('_'));
+      var durezaMgInput = $(['#Dureza_Magnesio_Out', indicador].join('_'));
+      var magnesioInput       = $(['#Magnesio_Out', indicador].join('_'));
+
+      calcioInput
+        .val(durezaCalcicaInput.val() * params.CALCIO_C1 / params.CALCIO_C2);
+
+      durezaMgInput
+        .val(durezaTotalInput.val() - durezaCalcicaInput.val());
+
+      magnesioInput
+        .val(durezaMgInput.val() * params.MAGNESIO_C1 / params.MAGNESIO_C2);
+    });
+  }
+
+  function GenerateJsonCalcio(muestra_id) {
+    var tr = $('#table-varios tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.resultado     = $(GetCell(tr, 1).children()[0]).val();
+    data.tipoensayo_id = 5;
+
+    return data;
+  }
+
+  function GenerateJsonDurezaMagnesio(muestra_id) {
+    var tr = $('#table-varios tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.resultado     = $(GetCell(tr, 2).children()[0]).val();
+    data.tipoensayo_id = 21;
+
+    return data;
+  }
+
+  function GenerateJsonMagnesio(muestra_id) {
+    var tr = $('#table-varios tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.resultado     = $(GetCell(tr, 3).children()[0]).val();
+    data.tipoensayo_id = 29;
+
+    return data;
+  }
+</script>

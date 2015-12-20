@@ -1,0 +1,21 @@
+
+<br>
+
+<div class="container-fluid cuadrologin">
+    <? echo Form::open("", "POST") ?>
+    <div class="form-group" >
+        <h1 class="text-center login-title">
+            <?echo Html::img("logo.png","")?>
+        </h1>
+        
+        <div class="row top-buffer" t>
+            <div class="col-md-6 col-md-offset-3">  
+                <? echo Form::text("usuario", "class='top-buffer form-control' required autofocus placeholder='Cédula'") ?>
+                <? echo Form::pass("clave", "class='top-buffer form-control' placeholder='Clave'") ?>
+                <? echo Form::submit("Entrar", "class='top-buffer form-control btn btn-primary'") ?>
+                <!--<a href="#" class="text-center new-account">Crear una cuenta </a>-->
+            </div>            
+        </div>
+        <? echo Form::close() ?>
+    </div>
+</div>

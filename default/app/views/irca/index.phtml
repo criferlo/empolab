@@ -1,0 +1,49 @@
+<div class="container">
+  <article class="panel panel-primary">
+    <header class="panel-heading">
+      <h3 class="panel-title">Tablas de irca</h3>
+    </header>
+    <section class="panel-body">
+      <a href="<?php echo PUBLIC_PATH; ?>irca/nuevo" class="btn btn-primary btn-sm" title="Nuevo irca">
+        <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Nuevo irca
+      </a>
+      <br><br>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Tipo ensayo</th>
+            <th>Unidades</th>
+            <th>Inf</th>
+            <th>Sup</th>
+            <th>Puntaje riesgo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($ircas as $irc): ?>
+            <tr>
+              <td><?php echo $irc->getTipoensayo()->nombre ?></td>
+              <td><?php echo $irc->unidades ?></td>
+              <td><?php echo $irc->limiteinferior ?></td>
+              <td><?php echo $irc->limitesuperior ?></td>
+              <td><?php echo $irc->puntajeriesgo ?></td>
+              <td>
+                <a
+                  href="<?php echo PUBLIC_PATH; ?>irca/editar/<?php echo $irc->id ?>"
+                  class="btn btn-success btn-sm"
+                  title="Editar irca">
+                  <i class="glyphicon glyphicon-pencil"></i>
+                </a>
+                <a
+                  href="<?php echo PUBLIC_PATH; ?>irca/eliminar/<?php echo $irc->id ?>"
+                  class="btn btn-danger btn-sm" title="Eliminar irca">
+                  <i class="glyphicon glyphicon-trash"></i>
+                </a>
+              </td>
+            </tr>
+          <?php endforeach ?>
+        </tbody>
+      </table>
+    </section>
+  </article>
+</div>

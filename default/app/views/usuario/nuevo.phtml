@@ -1,0 +1,57 @@
+<? echo View::content() ?>
+
+<div class="container-fluid">
+    <? echo Form::open("", "POST") ?>
+
+    <div class="col-sm-7 center-block" style="margin-left: 20%; margin-top: 2%;">
+
+        <div class="panel panel-default panelUsuarioNuevo">
+            <div class="panel-heading titulopanelUsuarioNuevo">
+                <h3 class="panel-title centrar">Nuevo usuario</h3></div>
+            <div class="panel-body" id="nuevousuario">
+
+                <div class="col-sm-12 center-block">
+                    <? echo Html::img("usuarios.png", null, "class='imagenUsuario'") ?></div>
+
+                <div class="col-sm-6">
+
+                    <label class="col-sm-12">Tipo Usuario</label>
+                    <div class="col-sm-12"><? echo Form::dbSelect("tipousuario.tipousuario_id", "nombre", null, null, "class='combosGeneral'") ?> </div>
+
+                </div>            
+                <div class="col-sm-6">
+
+                    <label class="col-sm-12">Nombre Completo</label>
+                    <div class="col-sm-12"><? echo Form::text("usuario.nombrecompleto", "class='form-control'", null); ?></div>
+
+                </div><div class="clearfix"></div><br>
+
+
+                <div class="col-sm-6">
+
+                    <label class="col-sm-12">Cedula</label>
+                    <div class="col-sm-12"><? echo Form::text("usuario.cedula", "class='form-control'", null); ?></div>
+
+                </div>
+
+                <div class="col-sm-6">
+
+                    <label class="col-sm-12">Clave</label>
+                    <div class="col-sm-12"><? echo Form::pass("usuario.clave", "class='form-control'", null) ?></div>
+                    <br>
+                </div><div class="clearfix"></div> <br>
+
+                              
+                 <div class="col-sm-7"><input type="submit" style="margin-left: 40%; margin-top: 5%;" id="btnGrabarUsuario" value="Guardar Datos" class="top-buffer form-control btn btn-warning"/>  </div>
+                    
+                    
+            </div></div>
+
+
+
+
+
+    </div>  <? echo Form::close() ?>
+
+
+

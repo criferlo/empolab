@@ -1,0 +1,133 @@
+<?php
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-cloruros">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+
+      <th class="text-center">VOLUMEN AgNO3<br>GASTADO MUESTRA (mL)</th>
+      <th class="text-center">VOLUMEN AgNO3<br>GASTADO BLANCO (mL)</th>
+      <th class="text-center">CLORUROS<br>(mgCl-/L)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td style="display: none;"><?php echo $constantes[0]->valor ?></td>
+        <td><?php 
+        
+        //criferlo
+        $mmc = new Muestramemoriacalculo();
+        $xarr = array();
+        $xarr = $mmc->find("muestra_id=".$ms->id);
+        $xvalor1=0;
+        $xresultado=0;
+        
+        //Flash::info($ms->id);                
+        
+        foreach($xarr as $xobj){
+            if($xobj->tipoensayo_id=="8"){
+                $xvalor1= $xobj->valor1;
+                $xresultado = $xobj->resultado;
+                break;
+            }
+        }
+        //criferlo
+        
+        echo
+        Form::number(
+            "Volumen_Muestra_$indicador",
+            "class='form-control fullwidth cloruros-in' placeholder='Volumen Muestra $indicador'",
+                $xvalor1
+        )?></td>
+        <td class="text-center">   <?php echo $constantes[1]->valor ?></td>
+        <td style="display: none;"><?php echo $constantes[2]->valor ?></td>
+        <td style="display: none;"><?php echo $constantes[3]->valor ?></td>
+        <td style="display: none;"><?php echo $constantes[4]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Cloruros_Out_$indicador",
+            "class='form-control fullwidth cloruros-out' readonly placeholder='Cloruros $indicador'",
+                $xresultado
+        )?></td>
+      </tr>
+    <?php endforeach ?>
+  </tbody>
+</table>
+
+
+<script type="text/javascript">
+  $('.cloruros-in').on('keyup', function(e) {
+    CalcularCloruros($(this));
+  });
+
+  $('.cloruros-in').on('change', function(e) {
+    CalcularCloruros($(this));
+  });
+
+  function CalcularCloruros(input) {
+    var indicador = input.attr('id').split('_')[2];
+    var inputOut  = $(['#Cloruros_Out', indicador].join('_'));
+
+    var AM = GetValue(input.parents()[1], 1);
+    var AN = input.val();
+    var AO = GetValue(input.parents()[1], 3);
+    var AP = GetValue(input.parents()[1], 4);
+    var AQ = GetValue(input.parents()[1], 5);
+    var AR = GetValue(input.parents()[1], 6);
+
+    inputOut.val(((AN-AO)*AP*AQ*AR)/AM);
+  }
+
+  function GetCell(tr, colIndex) {
+    var childs = $(tr).children();
+
+    return $(childs[colIndex]);
+  }
+
+  function GetValue(tr, colIndex) {
+    var number = new Number(GetCell(tr, colIndex).html());
+
+    return number.valueOf();
+  }
+
+  function SetValue(tr, colIndex, value) {
+    $($(tr).children()[colIndex]).html(value)
+  }
+
+  function GenerateJsonCloruros(muestra_id) {
+    var tr = $('#table-cloruros tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.valor1        = $(GetCell(tr, 2).children()[0]).val();
+    data.resultado     = $(GetCell(tr, 7).children()[0]).val();
+    data.tipoensayo_id = 8;
+
+    return data;
+  }
+</script>

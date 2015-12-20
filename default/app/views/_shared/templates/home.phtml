@@ -1,0 +1,109 @@
+<? Load::models("modulo", "opcionmodulo", "usuariomodulo", "usuarioopcion") ?>
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv='Content-type' content='text/html; charset=<?php echo APP_CHARSET ?>' />
+        <title>Laboratorio</title>
+        <?php Tag::css('bootstrap.min') ?>
+        <?php Tag::css('style') ?>
+        <?php Tag::css('jquery-ui.min') ?>
+        <?php Tag::css('jquery-ui.structure.min') ?>
+        <?php Tag::css('jquery-ui.theme.min') ?>
+        <?php echo Html::includeCss() ?>
+        <? echo Tag::js("jquery/jquery.min") ?>
+        <? echo Tag::js("jquery-ui/jquery-ui.min") ?>
+        <? echo Tag::js("jquery-ui/datepicker-es") ?>
+        <? echo Tag::js("bootstrap.min") ?>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+    </head>
+    <body>
+        <div id='content'>
+            <div id='head'>
+
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        <!-- Brand and toggle get grouped for better mobile display -->
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="#">Empopasto</a>
+                        </div>
+
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav">
+                                <?
+                                $arrUsuModulo = array();
+                                $obj1 = new Usuariomodulo();
+                                $arrUsuModulo = $obj1->find("usuario_id=" . Session::get("usuario_id"));
+                                //echo "mdulos:".count($arrUsuModulo);
+                                ?>
+                                <li>
+                                    <?echo Html::link("home/index","Home","class='dropdown-toggle'")?>    
+                                    <!--<a href="index">Home <span class="sr-only">(current)</span></a>-->
+                                </li>
+
+                                <? foreach ($arrUsuModulo as $modulo) { ?>
+                                    <?
+                                    $mod = new Modulo();
+                                    $mod->find_first($modulo->modulo_id);
+
+
+                                    $arrUsuOpcion = array();
+                                    $obj2 = new Usuarioopcion();
+                                    $arrUsuOpcion = $obj2->find("usuario_id=" . Session::get("usuario_id"));
+                                    //echo "opcion:".count($arrUsuOpcion);
+                                    ?>
+                                    <li class="dropdown">
+                                        
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><? echo $mod->nombremodulo ?> <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                    <? foreach ($arrUsuOpcion as $opcion) { ?>
+                                            
+                                                <?
+                                                    $arrfinal = array();
+                                                    $modo = new Opcionmodulo();
+                                                    $arrfinal = $modo->find("modulo_id=".$modulo->modulo_id);
+                                                    
+                                                    $op = new Opcionmodulo();
+                                                    $op->find_first($opcion->opcionmodulo_id);
+                                                ?>
+                                                <?foreach($arrfinal as $i){?>
+                                                    <?if($i->id==$opcion->opcionmodulo_id){?>
+                                            <li><?echo Html::link($i->link, $i->nombreopcion)?></li>
+                                                    <?}?>    
+                                                <?}?>
+                                               
+                                            <? } ?>
+                                        </ul>
+                                    </li>
+<? } ?>
+
+                            </ul>
+
+                            <ul class="nav navbar-nav navbar-right">
+
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Bienvenido <? echo Session::get("usuario_nombrecompleto") ?><span class="caret"></span></a>
+                                    <!--<ul class="dropdown-menu">
+                                        <li><a href="#">Perfil</a></li>
+                                        <li><a href="#">Cerrar sesión</a></li>                                        
+                                    </ul>-->
+                                </li>
+                            </ul>
+                        </div><!-- /.navbar-collapse -->
+                    </div><!-- /.container-fluid -->
+                </nav>
+            </div>
+<?php View::content(); ?>
+
+        </div>
+    </body>
+</html>
+
+

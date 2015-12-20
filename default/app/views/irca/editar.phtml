@@ -1,0 +1,32 @@
+<div class="container">
+  <h3>Modifique el siguiente registro</h3>
+
+  <br><br>
+
+  <?php echo Form::open("", "POST") ?>
+  <div class="form-group">
+    <label>Tipo ensayo</label>
+    <?php echo Form::dbSelect('irca.tipoensayo_id', 'nombre', null, 'Seleccione el tipo de ensayo', "class='form-control'", $irca->tipoensayo_id ) ?>
+  </div>
+  <div class="form-group">
+    <label>Unidades</label>
+    <?php echo Form::text('irca.unidades', "class='form-control'", $irca->unidades) ?>
+  </div>
+  <div class="form-group">
+    <label>Limite inferior</label>
+    <?php echo Form::input('number', 'irca.limiteinferior', "class='form-control'", $irca->limiteinferior) ?>
+  </div>
+  <div class="form-group">
+    <label>Limite superior</label>
+    <?php echo Form::input('number', 'irca.limitesuperior', "class='form-control'", $irca->limitesuperior) ?>
+  </div>
+  <div class="form-group">
+    <label>Puntaje riesgo</label>
+    <?php echo Form::text('irca.puntajeriesgo', "class='form-control'", $irca->puntajeriesgo) ?>
+  </div>
+  <div class="form-group text-right">
+    <input type="submit" value="Editar" class="btn btn-success">
+    <a href="<?php echo PUBLIC_PATH?>irca/index" class="btn btn-default">Volver</a>
+  </div>
+  <?php echo Form::close() ?>
+</div>

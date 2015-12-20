@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv='Content-type' content='text/html; charset=<?php echo APP_CHARSET ?>' />
+        <title>Laboratorio</title>
+        <?php echo Tag::css('bootstrap.min') ?>
+        <?php echo Tag::css('style') ?>
+        <?php echo Tag::css('login') ?>
+        <?php echo Html::includeCss() ?>
+        <? echo Tag::js("jquery/jquery.min") ?>
+        <? echo Tag::js("bootstrap.min") ?>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+
+    </head>
+    <body>
+
+        <div id="container">
+            <div id="content"> <?php View::content(); ?></div>
+        </div>
+
+        
+    </body>
+</html>

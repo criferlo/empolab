@@ -1,0 +1,43 @@
+<div class="container container-fluid">
+  <article class="panel panel-primary">
+    <header class="panel-heading">
+      <h3 class="panel-title">Variables memoria calculo</h3>
+    </header>
+    <section class="panel-body">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Activo</th>
+            <th>Técnica analitica</th>
+            <th>Unidad</th>
+            <th>Metodo</th>
+            <th>Limite detección</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($tiposEnsayo as $te): ?>
+            <?php $constantes = $te->getConstantetipoensayo();  ?>
+            <?php if (isset($constantes) && count($constantes) > 0): ?>
+              <tr>
+                <td><?php echo $te->nombre ?></td>
+                <td><?php echo $te->activo ? 'Si':'No' ?></td>
+                <td><?php echo $te->getTecnicaanalitica()->nombre ?></td>
+                <td><?php echo $te->getUnidad()->nombre ?></td>
+                <td><?php echo $te->getMetodo()->nombre ?></td>
+                <td><?php echo $te->limitedeteccion ?></td>
+                <td>
+                  <a
+                    href="<?php echo PUBLIC_PATH ?>variable/constantes/<?php echo $te->id ?>"
+                    class="btn btn-info btn-sm"
+                    title="Ver constantes"><i class="glyphicon glyphicon-eye-open"></i></a>
+                </td>
+              </tr>
+            <?php endif ?>
+          <?php endforeach ?>
+        </tbody>
+      </table>
+    </section>
+  </article>
+</div>

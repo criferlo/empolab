@@ -1,0 +1,312 @@
+
+
+
+<div class="container">
+    <div class="col-md-1 pull-right">
+        <button id="btnGuardarMemoria" class="btn btn-primary pull-right">Guardar memoría</button>
+    </div>
+    <h2>Memoria de calculo</h2>
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#datos">Datos</a></li>
+        <li><a href="#memoria">Memoria de calculo</a></li>
+    </ul>
+
+
+    <div class="tab-content">
+        <div id="datos" class="tab-pane fade in active">
+            <br>
+            <!-- Datos de muestras -->
+            <div class="row">
+                <div class="col-md-12">
+                    <?php foreach ($formato->getTempformatotipoensayo() as $te): ?>
+                        <?php
+                        if ($te->tipoensayo_id != 2 && $te->tipoensayo_id != 46 &&
+                                $te->tipoensayo_id != 3 && $te->tipoensayo_id != 22 &&
+                                $te->tipoensayo_id != 20 && $te->tipoensayo_id != 49 &&
+                                $te->tipoensayo_id != 8 && $te->tipoensayo_id != 50):
+                            ?>
+
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading"><?php echo $te->getTipoensayo()->nombre ?></div>
+                                <div class="panel-body">
+                                    <table class="table table-tipo-ensayo" data-tipo-ensayo="<?php echo $te->id; ?>">
+                                        <tbody>
+                                            <tr>
+                                                <?php foreach ($identMuestra as $index => $ident): ?>
+                                                    <td>
+                                                        <? echo "Muestra" . $ident ?>  
+                                                        <?php
+                                                        $idMuestra = $muestras[$index]->id;
+                                                        $idTipoEnsayo = $te->getTipoensayo()->id;
+                                                        echo Form::number(
+                                                                "Campo_" . $idTipoEnsayo . "_" . $ident, "class='form-control fullwidth acidez-input' data-muestra_id='$idMuestra' data-tipo_id='$idTipoEnsayo' placeholder='Muestra $ident'"
+                                                        )
+                                                        ?>
+                                                    </td>
+                                                <?php endforeach ?>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        <?php endif ?>
+                    <?php endforeach ?>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Datos de muestras -->
+        <div id="memoria" class="tab-pane fade">
+            <?php //foreach ($formato->getTempformatotipoensayo() as $te) { ?>
+                <br>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <? //if ($te->tipoensayo_id == "2") { ?>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">ACIDEZ</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/acidez', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $acidez->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //} ?>
+
+                        <? //if ($te->tipoensayo_id == "46") { ?>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">ALCALINIDAD RANGO BAJO</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/alcalinidad_rango_bajo', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $alcalinidadRangoBajo->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //}?>
+
+                        <? //if ($te->tipoensayo_id == "3") { ?>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">ALCALINIDAD</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/alcalinidad', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $alcalinidad->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //}?>
+
+                        <? //if ($te->tipoensayo_id == "22") { ?>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">DUREZA TOTAL</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/dureza_total', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $durezaTotal->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //}?>
+
+                        <? //if ($te->tipoensayo_id == "20") { ?>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">DUREZA CALCICA</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/dureza_calcica', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $durezaCalcica->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //}?>                        
+
+                        <? //if ($te->tipoensayo_id == "49") { ?>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">VARIOS</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/varios', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $varios->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //}?>
+
+                        <? //if ($te->tipoensayo_id == "8") { ?>    
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">CLORUROS</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/cloruros', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $cloruros->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //}?>
+
+
+                        <? //if ($te->tipoensayo_id == "50") { ?>   
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">MICROBIOLOGÍA</div>
+                            <div class="panel-body">
+                                <?php
+                                View::partial(
+                                        'memoria_calculo/microbiologia', FALSE, array(
+                                    'muestras' => $muestras,
+                                    'constantes' => $microbiologia->getConstantetipoensayo()
+                                        )
+                                )
+                                ?>
+                            </div>
+                        </div>
+                        <? //}?>
+
+                        <div class="row">
+                            <div class="col-md-1"><br><br></div>
+                        </div>
+                    </div>
+                </div>
+
+            <? //} ?>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var memoriaCalculo = [2, 46, 3, 22, 20, 49, 8, 50];
+        var tipoEnsayo = [];
+        var muestras_ids = [];
+        var formato_id=0;
+<?php
+
+$arrt = array(2,46,3,22,20,5,21,29,8,50);
+
+foreach ($formato->getTempformatotipoensayo() as $te) {
+    $ban=0;
+    foreach($arrt as $d){
+        if($d==$te->tipoensayo_id){
+           $ban=1;
+           break;
+        }
+    }
+    if($ban==0){
+        echo 'tipoEnsayo.push(' . $te->tipoensayo_id . ');';
+    }    
+}
+foreach ($muestras as $mst) {
+    echo 'muestras_ids.push(' . $mst->id . ');';
+}
+
+echo 'formato_id='.$formato->id.";";
+?>
+
+        //console.log(tipoEnsayo);
+        //console.log(muestras_ids);
+
+        $(".nav-tabs a").click(function () {
+            $(this).tab('show');
+        });
+
+        $('#btnGuardarMemoria').on('click', function (e) {
+            e.preventDefault();
+
+            var ajaxCalls = [];
+            var functions = [];
+            var functions = [
+                GenerateJsonAcidez,
+                GenerateJsonAlcalinidad,
+                GenerateJsonAlcalinidadRangoBajo,
+                GenerateJsonCloruros,
+                GenerateJsonDurezaCalcica,
+                GenerateJsonDurezaTotal,
+                GenerateJsonMicrobiologia1,
+                GenerateJsonMicrobiologia2,
+                GenerateJsonMicrobiologia3,
+                GenerateJsonCalcio,
+                GenerateJsonDurezaMagnesio,
+                GenerateJsonMagnesio
+            ];
+           
+            arrayData = [];
+            muestras_ids.forEach(function (muestra_id) {
+                tipoEnsayo.forEach(function (tipoEnsayo_id) {
+                    var input = $([
+                        'input[data-muestra_id=',
+                        muestra_id, ']',
+                        '[data-tipo_id=',
+                        tipoEnsayo_id, ']'
+                    ].join(''));
+
+                    if (input && tipoEnsayo_id != 2) {                        
+                        data = {
+                            muestra_id: muestra_id,
+                            tipoensayo_id: tipoEnsayo_id,
+                            resultado: input.val()
+                        };
+                        arrayData.push(data);
+                        //}));
+                    }
+                });
+
+                functions.forEach(function (fn) {                   
+                    data = 
+                        fn(muestra_id)
+                    ;
+                    arrayData.push(data);
+                    //}));
+                });
+                
+            });
+            
+            $.ajax({
+                url: '<?php echo PUBLIC_PATH ?>memoriarest/',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(arrayData)
+            }).done(function (data)
+            {                
+                alert("Datos enviados con éxito");
+                //window.location = "formato/modificar/" + formato_id;
+            }).complete(function (data) {
+                        //alert("hola");
+                        alert("Datos enviados con éxito");
+                        window.location = "../modificar/" + formato_id;
+                        
+                    });
+        });
+    });
+</script>

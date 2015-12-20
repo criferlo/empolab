@@ -1,0 +1,97 @@
+<?php 
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-dureza-total">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+
+      <th class="text-center">VOLUMEN MUESTRA<br>TITULADO  (mL)</th>
+      <th class="text-center">ml EDTA gastado<br>titulacion</th>
+      <th class="text-center">MOLARIDAD<br>EDTA</th>
+      <th class="text-center">PESO MOLECULAR<br>CaCO3 (g/mol)</th>
+      <th class="text-center">FACTOR DE<br>CONVERSIÓN (g - mg)</th>
+      <th class="text-center">DUREZA TOTAL<br>(mgCaCO3/L)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td class="text-center"><?php echo $constantes[0]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "DurezaTotal_$indicador",
+            "class='form-control fullwidth dureza-total-input' placeholder='Volumen $indicador (mL)'"
+        )?></td>
+        <td class="text-center"><?php echo $constantes[1]->valor ?></td>
+        <td class="text-center"><?php echo $constantes[2]->valor ?></td>
+        <td class="text-center"><?php echo $constantes[3]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Dureza_Total_Out_$indicador",
+            "class='form-control fullwidth dureza-total-out' readonly placeholder='Dureza total $indicador (mgCaCO3/L)'"
+        )?></td>
+      </tr>
+    <?php endforeach ?>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  $('.dureza-total-input').on('keyup', function(e) {
+    CalcularDurezaTotal($(this));
+    CalcularVarios();
+  });
+
+  $('.dureza-total-input').on('change', function(e) {
+    CalcularDurezaTotal($(this));
+    CalcularVarios();
+  });
+
+  function CalcularDurezaTotal(input) {
+    var indicador = input.attr('id').split('_')[1];
+    var inputOut  = $(['#Dureza_Total_Out', indicador].join('_'));
+
+    var O = GetValue(input.parents()[1], 1);
+    var P = input.val();
+    var Q = GetValue(input.parents()[1], 3);
+    var R = GetValue(input.parents()[1], 4);
+    var S = GetValue(input.parents()[1], 5);
+
+    inputOut.val(P*Q*R*S/O);
+  }
+
+  function GenerateJsonDurezaTotal(muestra_id) {
+    var tr = $('#table-dureza-total tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.valor1        = $(GetCell(tr, 2).children()[0]).val();
+    data.resultado     = $(GetCell(tr, 6).children()[0]).val();
+    data.tipoensayo_id = 22;
+
+    return data;
+  }
+</script>

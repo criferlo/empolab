@@ -1,0 +1,49 @@
+<?echo View::content()?>
+<div class="container-fluid">
+    <? echo Form::open("", "POST") ?>
+
+    <div class="col-sm-7 center-block" style="margin-left: 20%; margin-top: 2%;">
+
+        <div class="panel panel-default panelEditarUsuario">
+            <div class="panel-heading titulopanelEditarUsuario">
+                <h3 class="panel-title centrar">Modificar usuario</h3></div>
+            <div class="panel-body" id="editarusuario">
+
+                 <div class="col-sm-12 center-block">
+                     <? echo Html::img("editarusuario.png",null, "class='imagenUsuario'")?></div>
+                
+                <div class="col-sm-6">
+
+                    <label class="col-sm-12">Tipo Usuario</label>
+                    <div class="col-sm-12"><? echo Form::dbSelect("tipousuario.tipousuario_id", "nombre", null, null, "class='combosGeneral'",$usu_consultado->tipousuario_id) ?> </div>
+
+                </div>            
+                <div class="col-sm-6">
+
+                    <label class="col-sm-12">Nombre Completo</label>
+                    <div class="col-sm-12"><? echo Form::text("usuario.nombrecompleto", "class='form-control'", $usu_consultado->nombrecompleto); ?></div>
+
+                </div><div class="clearfix"></div><br>
+                
+                
+                 <div class="col-sm-6">
+
+                    <label class="col-sm-12">Cedula</label>
+                    <div class="col-sm-12"><? echo Form::text("usuario.cedula", "class='form-control'", $usu_consultado->cedula); ?></div>
+
+                </div>
+                
+                 <div class="col-sm-6">
+
+                    <label class="col-sm-12">Clave</label>
+                    <div class="col-sm-12"><? echo Form::pass("usuario.clave",  "class='form-control'", $usu_consultado->clave) ?></div>
+                    <br>
+                 </div><div class="clearfix"></div>
+                 <div class="col-sm-7"><input type="submit" style="margin-left: 40%; margin-top: 5%;" id="Editar" value="Guardar Datos" class="top-buffer form-control btn btn-success"/>  </div>
+            </div>
+        </div></div>
+
+
+<? echo Form::hidden("idusuario", null, $usu_consultado->id) ?>
+
+</div>  <? echo Form::close() ?>

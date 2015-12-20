@@ -1,0 +1,399 @@
+/* Formatea los mensajes Flash::xxx() de KumbiaPHP */
+
+body{
+    font-family: 'Open Sans', sans-serif;
+    font-size: small;
+}
+
+div.autocomplete {
+    position: relative;
+    background-color: white;
+    border: 1px solid #888;
+    margin: 0;
+    padding: 0;
+}
+div.autocomplete ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+div.autocomplete ul li.selected {
+    background-color: #ffb;
+}
+div.autocomplete ul li {
+    list-style-type: none;
+    display: block;
+    margin: 1px 0;
+    padding: 1px;
+    cursor: pointer;
+    font-size: small;
+}
+
+.divTipoMuestra{
+    margin-left: 7%; 
+    padding-bottom: 2%;
+}
+
+.divAgregarMuestra
+{
+    margin-left: 31%;
+    padding-bottom: 3%;
+}
+
+.divMuestra
+{
+    float: left;    
+    text-align: right;
+}
+
+.panelAguaCruda
+{
+    width: 96%; 
+    margin-left: 18px; 
+    border: 1px solid #986291;
+}
+
+.panel-default>.panel-heading.tituloPanelAguaCruda
+{
+    background-color: #986291;
+    color: #FFF;
+}
+
+.panelAguaTratada{
+    width: 96%; 
+    margin-left: 18px; 
+    border: 1px solid #fe7211;
+}
+
+.panelAguaResidual
+{
+    width: 96%; 
+    margin-left: 18px; 
+    border: 1px solid #50c7a7;
+}
+
+.panelQueja
+{
+    width: 96%; 
+    margin-left: 18px; 
+    border: 1px solid #f0ff00;
+}
+
+.panel-default>.panel-heading.tituloPanelQueja
+{
+    background-color: #f0ff00;
+    color: #FFF;
+}
+
+.panel-default>.panel-heading.tituloPanelAguaTratada
+{
+    background-color: #ff9a3e;
+    color: #FFF;
+}
+
+.panel-default>.panel-heading.tituloPanelAguaResidual
+{
+    background-color: #50c7a7;
+    color: #FFF;
+}
+
+.panelEditarUsuario
+{
+    width: 96%; 
+    margin-left: 18px; 
+    border: 1px solid #42A5F5;
+}
+
+.panel-default>.panel-heading.titulopanelEditarUsuario
+{
+    background-color: #42A5F5;
+    color: #FFF;
+}
+
+.panelIndex
+{
+    width: 96%; 
+    margin-left: 18px; 
+    border: 1px solid #FFD180;
+
+}
+
+.panel-default>.panel-heading.titulopanelIndex
+{
+    background-color: #FFD180;
+    color: #FFF;
+}
+
+.panelUsuarioNuevo
+{
+    width: 96%; 
+    margin-left: 18px; 
+    border: 1px solid #9CCC65;
+}
+
+.panel-default>.panel-heading.titulopanelUsuarioNuevo
+{
+    background-color: #9CCC65;
+    color: #FFF;
+}
+.botones
+{
+    width: 100%;
+    height: 37px;
+}
+
+.botonAgregarMuestra
+{
+    background-color: #8bc34a;
+    width: 108%;
+    padding: 10px 16px;
+    font-size: small;
+    color: #FFFFDF;
+    height: 42px;
+}
+
+.botonGuardarCabecera
+{
+    background-color: #8bc34a;
+    width: 20%;
+    padding: 10px 16px;
+    font-size: small;
+    color: #FFFFDF;
+    height: 42px;
+
+}
+
+.calendarios{
+    width: 100%;
+}
+
+.centrar
+{
+    text-align: right;
+}
+
+.columnasTablaContenido
+{
+    width: 23%;
+    text-align: center;
+    border: 1px solid #5fa2dd;
+    font-weight: normal;
+}
+
+.columnasTablaTitulos
+{
+    width: 23%;
+    text-align: center;
+    border: 1px solid #FFF;
+    background: #438eb9;
+    color: #FFFFDF;
+}
+
+.combosGeneral
+{
+    width: 100% !important;
+    height: 32px;
+}
+
+.combosGeneralHtml
+{
+    width: auto;
+    height: 32px;
+}
+
+.divSeleccionarTipoCliente
+{
+    width: 48%;
+    margin: 0 auto;
+    margin-left: 28%;
+    border: 1px solid #2680be;
+    padding: 2%;
+    margin-top: 6%;
+    background: #69c7c6;    
+    -webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
+.error {
+    color: #D8000C;
+    background-color: #FFBABA;
+    background-image: url('../img/default/error.png');
+}
+
+
+.flash {
+    border: 1px solid;
+    margin: 1px 0;
+    min-height: 32px;
+    padding:3px 10px 3px 50px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    line-height: 32px;
+}
+
+.highlight {
+    background: #FFFFDF;
+}
+
+.info {
+    color: #00529B;
+    background-color: #BDE5F8;
+    background-image: url('../img/default/info.png');
+}
+
+.imagenUsuario
+{
+    margin-left:39%;
+    padding-bottom: 2%;
+}
+
+.labelSinNegrilla
+{
+    font-weight: 100;
+}
+
+.letrasCabecera
+{
+    margin-top: 11px;
+    margin-left: 33px;
+}
+
+.letrasbuscarpor
+{
+    margin-left: 36%;
+    margin-top: 6%;
+}
+
+.top-buffer { margin-top:10px; }
+
+.valid {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+    background-image:url('../img/default/valid.png');
+}
+.warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+    background-image: url('../img/default/warning.png');
+}
+
+
+.thTablasTitulo{
+    text-align: center;
+    border: 1px solid #FFF;
+    width: 23%
+}
+
+
+.thTablasTituloIndex{
+    text-align: center;
+    border: 1px solid #FFF;
+    width: auto;
+    color: #FFF;
+    alignment-adjust: central;
+
+}
+
+.tdTablasColor
+{
+    background: #5fa2dd;
+    text-align: center;
+    border: 1px solid #FFF;
+    font-weight: bold;
+    color: #FFFFDF;
+}
+.tdTablasBorde
+{
+    text-align: center;
+    border: 1px solid #5fa2dd;
+}
+
+.thTablas
+{
+    text-align: center;
+    border: 1px solid #5fa2dd;
+    width: 23%
+}
+
+.thTablasVerdes
+
+{
+
+    text-align: center;
+    font-weight: 100;
+    border: 1px solid #A5D6A7;
+    padding: 1%;
+    width: auto;
+}
+
+
+.thTablasNaranjas
+
+{
+    text-align: center;
+    font-weight: 100;
+    border: 1px solid #FFCC80;
+    padding: 1%;
+    width: auto;
+}
+
+.tablaColorAzul
+{
+    background: #5fa2dd;
+    color: #FFF;
+}
+
+.tablaCabecera{
+    width: 97%;
+    margin: 0 auto;
+    font-size: 12px;
+}
+
+.nofloat 
+{
+    float: none !important;
+    display: inline-block !important;
+}
+
+.letrasBlancas
+{
+    color: #FFF;
+}
+
+.margenDerecha
+{
+    float: left;
+}
+
+.margenDerechaOnce
+{
+    margin-left: 11%;
+}
+
+.margenDerechacinco{
+    margin-left: 5%;
+}
+
+
+.panelModulosUsuarios
+{ 
+    width: 60%;
+    margin: 0 auto;    
+    font-size: 20px;
+}
+
+
+.panel-default>.panel-heading.titulopanelModulosUsuarios
+{ 
+       font-size: 20px;
+}
+
+
+.tablaModuloUsuario
+{ 
+    font-size: 14px;
+    width: 50%;
+    margin: 0 auto;
+}
+

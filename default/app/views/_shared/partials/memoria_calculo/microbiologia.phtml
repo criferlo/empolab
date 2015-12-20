@@ -1,0 +1,106 @@
+<?php
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-microbiologia">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+
+      <th class="text-center">COLIFORMES TOTALES<br>Microorganismos /100cm³</th>
+      <th class="text-center">E- COLI<br>Microorganismos /100cm³</th>
+      <th class="text-center">MESÓFILOS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td class="text-center">
+          <?php echo
+            Form::text(
+              "Coliformes_$indicador",
+              "class='form-control fullwidth microbiologia-out readonly' placeholder='Coliformes $indicador'",
+              $constantes[0]->valor) ?>
+        </td>
+        <td class="text-center">
+          <?php echo
+            Form::text(
+              "Coli_$indicador",
+              "class='form-control fullwidth microbiologia-out readonly' placeholder='E-Coli $indicador'",
+              $constantes[1]->valor) ?>
+        </td>
+        <td>
+          <?php if ($ms->getTipomatrizanalizada()->abrv == 'T'): ?>
+            <?php echo
+              Form::number(
+                  "Microbiologia_$indicador",
+                  "class='form-control fullwidth microbiologia-out readonly' placeholder='Mesofilos $indicador'"
+              )
+            ?>
+          <?php else: ?>
+            <?php echo
+              Form::number(
+                  "Microbiologia_$indicador",
+                  "class='form-control fullwidth microbiologia-out' placeholder='Mesofilos $indicador'"
+              )
+            ?>
+          <?php endif ?>
+        </td>
+      </tr>
+    <?php endforeach ?>
+  </tbody>
+</table>
+<script>
+  function GenerateJsonMicrobiologia1(muestra_id) {
+    var tr = $('#table-microbiologia tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.resultado     = $(GetCell(tr, 1).children()[0]).val();
+    data.tipoensayo_id = 9;
+
+    return data;
+  }
+  function GenerateJsonMicrobiologia2(muestra_id) {
+    var tr = $('#table-microbiologia tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.resultado     = $(GetCell(tr, 2).children()[0]).val();
+    data.tipoensayo_id = 23;
+
+    return data;
+  }
+  function GenerateJsonMicrobiologia3(muestra_id) {
+    var tr = $('#table-microbiologia tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.resultado     = $(GetCell(tr, 3).children()[0]).val();
+    data.tipoensayo_id = 30;
+
+    return data;
+  }
+</script>

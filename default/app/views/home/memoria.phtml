@@ -1,0 +1,92 @@
+<div class="container">
+  <h2>Memoria de calculo</h2>
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#home">Datos</a></li>
+    <li><a href="#menu1">Memoria de calculo</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="home" class="tab-pane fade in active">
+      <!-- Datos de muestras -->
+      <div>
+          <div class="col-md-6">DESCRIPCIÓN PARAMETROS FISICOQUIMICOS Y MICROBIOLÓGICOS</div>
+          <div class="col-md-6">RESULTADO</div>
+      </div>
+      <div>
+          <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+         <div  class="col-md-1">ensayo</div>
+      </div>
+    </div>
+      <!-- Fin Datos de muestras -->
+    <div id="menu1" class="tab-pane fade">
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-primary">
+            <div class="panel-heading">ACIDEZ</div>
+            <div class="panel-body">
+              <?php View::partial('memoria_calculo/acidez') ?>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">ALCALINIDAD</div>
+            <div class="panel-body">
+              <?php View::partial('memoria_calculo/alcalinidad') ?>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">DUREZA TOTAL</div>
+            <div class="panel-body">
+              <?php View::partial('memoria_calculo/dureza_total') ?>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">DUREZA CALCICA</div>
+            <div class="panel-body">
+              <?php View::partial('memoria_calculo/dureza_calcica') ?>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">VARIOS</div>
+            <div class="panel-body">
+              <?php View::partial('memoria_calculo/varios') ?>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">CLORUROS</div>
+            <div class="panel-body">
+              <?php View::partial('memoria_calculo/cloruros') ?>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">MICROBIOLOGÍA</div>
+            <div class="panel-body">
+              <?php View::partial('memoria_calculo/microbiologia') ?>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $(".nav-tabs a").click(function(){
+        $(this).tab('show');
+    });
+});
+</script>

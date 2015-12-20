@@ -1,0 +1,78 @@
+<div class="container">
+  <h3>Modifique el siguiente registro</h3>
+
+  <br><br>
+
+  <?php echo Form::open("", "POST") ?>
+    <div class="form-group">
+      <label>Tipo cliente</label>
+      <?php echo Form::dbSelect('cliente.tipocliente_id', 'nombre', null, 'Seleccione el tipo de cliente', "class='form-control'", $cliente->tipocliente_id ) ?>
+    </div>
+    <div class="form-group">
+      <label>Nit</label>
+      <?php echo Form::text('cliente.nit', "class='form-control'", $cliente->nit) ?>
+    </div>
+    <div class="form-group">
+      <label>Nombre</label>
+      <?php echo Form::text('cliente.nombre', "class='form-control'", $cliente->nombre) ?>
+    </div>
+    <div class="form-group">
+      <label>Activo</label>
+      <?php echo Form::text('cliente.activo', "class='form-control'", $cliente->activo) ?>
+    </div>
+    <div class="form-group">
+      <label>Teléfono</label>
+      <?php echo Form::text('cliente.telefono', "class='form-control'", $cliente->telefono) ?>
+    </div>
+    <div class="form-group">
+      <label>Correo</label>
+      <?php echo Form::email('cliente.correo_electronico', "class='form-control'", $cliente->correo_electronico) ?>
+    </div>
+    <div class="form-group">
+      <label>Departamento</label>
+      <?php echo Form::dbSelect('cliente.tipodepartamento_id', 'nombre', null, 'Seleccione el departamento', "class='form-control'", $cliente->tipodepartamento_id ) ?>
+    </div>
+    <div class="form-group" id="municipio-container">
+      <?php
+        View::partial(
+          'municipio/municipio_list',
+          FALSE,
+          array(
+            'municipios'   => $municipios,
+            'cliente'      => $cliente
+            )
+        )
+      ?>
+    </div>
+    <div class="form-group">
+      <label>Dirección</label>
+      <?php echo Form::text('cliente.direccion', "class='form-control'", $cliente->direccion) ?>
+    </div>
+
+    <div class="form-group text-right">
+      <input type="submit" value="Crear" class="btn btn-primary">
+      <a href="<?php echo PUBLIC_PATH?>clientes/index" class="btn btn-default">Volver</a>
+    </div>
+  <?php echo Form::close() ?>
+</div>
+
+<script>
+  $(function() {
+    $('#cliente_tipodepartamento_id').change(function() {
+      var cbo = $(this);
+
+      $.ajax({
+        url: '<?php echo PUBLIC_PATH ?>cliente/filtrar_municipios/'+cbo.val(),
+        data: {
+          cliente_id: '<?php echo $cliente->id ?>'
+        },
+        success: function(result) {
+          $('#municipio-container').html(result);
+        },
+        error: function(error) {
+          alert(error);
+        }
+      })
+    })
+  });
+</script>

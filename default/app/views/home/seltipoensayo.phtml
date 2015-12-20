@@ -1,0 +1,50 @@
+<div class='container-fluid'>
+  <article class='panel panel-primary'>
+    <header class='panel-heading'>
+      <h4 class='panel-title'>Selecciona el tipo de ensayo</h4>
+    </header>
+    <section class='panel-body'>
+      <?php echo Form::open('home/datos','POST') ?>
+        <button class='btn btn-info' id="sel-todos">Seleccionar todos</button>
+        <button class="btn btn-default" id="desel-todos">Deseleccionar todos</button>
+        <button class="btn btn-default" id="cambiar-estado">Cambiar estado</button>
+        <br><br>
+        <?php echo Form::hidden("formato_id", null, $formato_id) ?>
+        <div class="row">
+          <?php foreach ($arr as $obj): ?>
+            <div class="col-md-4">
+              <label class="form-label">
+                <?php  echo Form::check("ensayo".$obj->id, $obj->id, null, false)."&nbsp;&nbsp;".$obj->nombre ?>
+              </label>
+            </div>
+          <?php endforeach ?>
+        </div>
+        <br>
+        <?php echo Form::submit("Enviar", "class='btn btn-primary pull-right'") ?>
+        <br>
+        <br>
+      <?php echo Form::close() ?>
+    </section>
+  </article>
+</div>
+<script>
+  $(function() {
+    $('#sel-todos').click(function(e) {
+      e.preventDefault();
+      $('input:checkbox').prop('checked', true);
+    });
+
+    $('#desel-todos').click(function(e) {
+      e.preventDefault();
+      $('input:checkbox').prop('checked', false);
+    });
+
+    $('#cambiar-estado').click(function(e) {
+      e.preventDefault();
+
+      [].forEach.call($('input:checkbox'), function(item) {
+        $(item).prop('checked', !$(item).prop('checked'));
+      });
+    });
+  });
+</script>

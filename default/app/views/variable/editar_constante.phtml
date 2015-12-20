@@ -1,0 +1,17 @@
+<div class="container">
+  <h1>Editar constante</h1>
+  <?php echo Form::open("", "POST") ?>
+    <div class="form-group">
+      <label>Nombre</label>
+      <?php echo Form::text('constante.nombre', 'class="form-control"', $constante->nombre) ?>
+    </div>
+    <div class="form-group">
+      <label>Valor</label>
+      <?php echo Form::text('constante.valor', 'class="form-control"', $constante->valor) ?>
+    </div>
+    <div class="form-group text-right">
+      <input type="submit" value="Editar" class="btn btn-success">
+      <a href="<?php echo PUBLIC_PATH?>variable/constantes/<?php echo $constante->tipoensayo_id ?>" class="btn btn-default">Volver</a>
+    </div>
+  <?php echo Form::close() ?>
+</div>

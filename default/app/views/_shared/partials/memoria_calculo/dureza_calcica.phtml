@@ -1,0 +1,95 @@
+<?php
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-dureza-calcica">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+
+
+      <th class="text-center">ml EDTA gastado<br>titulacion</th>
+      <th class="text-center">DUREZA CÁLCICA<br>(mgCaCO3/L)</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-indicador="<?php echo $indicador ?>" data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td style="display: none;"><?php echo $constantes[0]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Dureza_Calcica_$indicador",
+            "class='form-control fullwidth dureza-calcica-input' placeholder='EDTA $indicador gastado'"
+        )?></td>
+        <td style="display: none;"><?php echo $constantes[1]->valor ?></td>
+        <td style="display: none;"><?php echo $constantes[2]->valor ?></td>
+        <td style="display: none;"><?php echo $constantes[3]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Dureza_Calcica_Out_$indicador",
+            "class='form-control fullwidth dureza-calcica-out' readonly placeholder='Dureza total $indicador (mgCaCO3/L)'"
+        )?></td>
+      </tr>
+    <?php endforeach ?>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  $('.dureza-calcica-input').on('keyup', function(e) {
+    CalcularCalcica($(this));
+    CalcularVarios();
+  });
+
+  $('.dureza-calcica-input').on('change', function(e) {
+    CalcularCalcica($(this));
+    CalcularVarios();
+  });
+
+  function CalcularCalcica(input) {
+    var indicador = input.attr('id').split('_')[2];
+    var inputOut  = $(['#Dureza_Calcica_Out', indicador].join('_'));
+
+    var U = GetValue(input.parents()[1], 1);
+    var V = input.val();
+    var W = GetValue(input.parents()[1], 3);
+    var X = GetValue(input.parents()[1], 4);
+    var Y = GetValue(input.parents()[1], 5);
+
+    inputOut.val(V*W*X*Y/U);
+  }
+
+  function GenerateJsonDurezaCalcica(muestra_id) {
+    var tr = $('#table-dureza-calcica tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.valor1        = $(GetCell(tr, 2).children()[0]).val();
+    data.resultado     = $(GetCell(tr, 6).children()[0]).val();
+    data.tipoensayo_id = 20;
+
+    return data;
+  }
+</script>

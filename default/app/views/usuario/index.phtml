@@ -1,0 +1,76 @@
+<div class="container-fluid">
+    <? echo Form::open("", "POST") ?>
+
+    <div class="col-sm-10 center-block" style="margin-left: 9%;">
+
+        <div class="panel panel-default panelIndex">
+            <div class="panel-heading titulopanelIndex">
+                <h3 class="panel-title centrar">Index</h3></div>
+            <div class="panel-body" id="editarusuario">
+
+                <div class="col-sm-2">
+                    <label class="letrasbuscarpor">Buscar por:</label>   
+                </div>
+                <div class="col-sm-3">
+                    <select name="" id="comboBusqueda" class="form-control"> 
+                        <option value="0">Cedula</option>
+                        <option value="1">Nombre</option>
+                    </select>          
+                </div>
+                <div class="col-sm-5">
+                    <? echo Form::text("textoBusqueda", "class='form-control'", null); ?>  
+                </div>
+                <div class="col-sm-2">
+                    <input type="submit" id="Buscar" style="margin-top: -1px;" value="Buscar" class="top-buffer form-control btn btn-info"/>
+                </div> 
+                
+                <div class="col-sm-2">                    
+                    <?echo Html::link("usuario/nuevo", "Nuevo","class='top-buffer form-control btn btn-info'")?>
+                </div> 
+
+                <div class="clearfix"></div><br>
+
+                <div class="col-sm-12">  
+                    <div class="table-responsive">        
+                        <table style="width: 100%">
+                            <tr style="background-color: #A5D6A7">
+                                <th class="thTablasTituloIndex">CEDULA</th>
+                                <th class="thTablasTituloIndex">NOMBRE</th> 
+                                <th class="thTablasTituloIndex">CLAVE</th>
+                                <th class="thTablasTituloIndex">TIPO USUARIO</th>  
+                                <th class="thTablasTituloIndex" colspan="2">OPCIONES</th> 
+
+                            </tr>
+                            <tbody>
+                                <? foreach ($usuarios as $objeto) { ?>
+                                    <tr>
+
+                                        <th class="thTablasVerdes"><? echo $objeto->cedula ?></th> 
+                                        <th class="thTablasVerdes"><? echo $objeto->nombrecompleto ?></th>
+                                        <th class="thTablasVerdes"><? echo $objeto->clave ?></th>  
+                                        <th class="thTablasVerdes"><? echo $objeto->tipousuario_id ?></th> 
+                                        <th class="thTablasVerdes">                                       
+                                        <? echo Html::linkAction("editar/$objeto->id", "Editar", "class='btn btn-default btn-sm'") ?>
+                                        <? echo Html::linkAction("eliminar/$objeto->id", "Eliminar", "class='btn btn-default btn-sm'") ?>
+                                        <? echo Html::linkAction("modificarperfil/$objeto->id", "Modulos", "class='btn btn-default btn-sm'") ?>
+                                        <? echo Html::linkAction("agregaropciones/$objeto->id", "Opciones", "class='btn btn-default btn-sm'") ?></th>
+                                        <? } ?> 
+
+
+                                </tr>
+                            </tbody>
+                        </table></div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+

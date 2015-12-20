@@ -1,0 +1,11 @@
+<label>Municipio</label>
+<select id="cliente_tipomunicipio_id" name="cliente[tipomunicipio_id]" class="form-control">
+  <option value="">Seleccione el municipio</option>
+  <?php foreach ($municipios as $mun): ?>
+    <option
+      value="<?php echo $mun->id ?>"
+      <?php if (isset($cliente) && $mun->id == $cliente->tipomunicipio_id): ?>
+        selected
+      <?php endif ?>><?php echo $mun->nombre ?></option>
+  <?php endforeach ?>
+</select>

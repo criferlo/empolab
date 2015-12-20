@@ -1,0 +1,61 @@
+<? echo View::content() ?>
+<div class="container-fluid">
+    <? echo Form::open("", "POST") ?>
+    <div class="panel panel-warning panelModulosUsuarios" style="margin-top: 3%">
+        <div class="panel-heading titulopanelModulosUsuarios">Seleccion de opciones para usuarios</div>
+        <div class="panel-body">
+            <div class="col-sm-12">  
+                <div class="table-responsive">        
+                    <table class="tablaModuloUsuario">
+                        <tr style="background-color: #FFCC80">
+                            <th class="thTablasTituloIndex">NOMBRE DE OPCION</th>
+                            <th class="thTablasTituloIndex">SELECCIONAR</th>
+                        </tr>
+                        <tbody>
+                            <? foreach ($opciones as $opcion) { ?>
+                                <tr>
+
+                                    <th class="thTablasNaranjas"><? echo $opcion->nombreopcion ?></th> 
+                                    <th class="thTablasNaranjas"><? echo Form::check("opcion" . $opcion->id, $opcion->id, null, null) ?></th>
+
+                                <? } ?> 
+                                <? echo Form::hidden('idusuario', null, $idusuario) ?>                     
+
+                            </tr>
+                        </tbody>
+                    </table></div>
+
+                <div class="col-sm-6"><input type="submit" style="margin-left: 55%; margin-top: 5%;" id="btnguardaropcion" value="Guardar Opciones" class="top-buffer form-control btn btn-warning"/>  </div>
+
+            </div><br>
+        </div>
+    </div><br><br>
+
+
+
+    <div class="col-sm-12" style="text-align: center;"><h4>OPCIONES ASIGNADAS AL USUARIO </h4></div> <div class="clearfix"></div>
+    <div class="table-responsive" style="padding-bottom: 5%">        
+        <table class="tablaModuloUsuario" >
+            <tr style="background-color:#FFCC80">
+                <th class="thTablasTituloIndex">NOMBRE DE MODULO</th>
+                <th class="thTablasTituloIndex">NOMBRE DE OPCION</th>
+                <th class="thTablasTituloIndex" colspan="2">OPCIONES</th> 
+            </tr>
+            <tbody>
+                <? foreach ($opcionesusuario as $opcion) { ?>
+                    <tr>
+                        <th class="thTablasNaranjas"><? echo $opcion->nombremodulo ?></th> 
+                        <th class="thTablasNaranjas"><? echo $opcion->nombre ?></th> 
+                        <th class="thTablasNaranjas">
+                        
+                            <? echo Html::linkAction("eliminaropcionusuario/$opcion->identificador", "Eliminar", "class='btn btn-default btn-sm'") ?></th>
+
+                    <? } ?> 
+                    <? echo Form::hidden('idusuario', null, $idusuario) ?>                     
+
+                </tr>
+            </tbody>
+        </table></div>
+
+    <? echo Form::close() ?>
+</div>

@@ -1,0 +1,655 @@
+<? echo View::content() ?>
+
+<div class="container container-fluid">
+    <? echo Form::open("", "POST") ?>
+
+
+    <div class="col-sm-6">
+        <? echo Html::img("empopasto.png") ?>
+    </div>    
+
+    <div class="col-sm-6 centrar">
+
+        <? echo Form::label('EMPOPASTO S.A E.S.P.', 'TITULO') ?> <br>
+        <? echo Form::label('NIT 891200686-3', 'Nit') ?>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="table-responsive">
+        <table class="table tablaCabecera">
+            <td colspan="4" class="centrar">
+                <? echo Form::label('Nombre del documento: FORMATO INFORME DE ENSAYO', 'nombreFormato', "class='letrasCabecera'") ?>
+
+            </td>
+            <tr class="tablaColorAzul">
+                <th class="thTablasTitulo">LABORATORIO DE AGUAS</th>
+                <th class="thTablasTitulo">CODIGO</th>
+
+                <th class="thTablasTitulo">FECHA APROBACION</th>
+                <th class="thTablasTitulo">VERSION</th>
+            </tr>
+            <tr>
+                <th class=""></th>
+                <th class="thTablas">LA-F-01</th>
+                <th class="thTablas">2015/09/22</th>
+                <th class="thTablas">1</th>
+            </tr>
+            <tr>
+                <td colspan="4" class="tdTablasColor">LABORATORIO DE AGUAS - EMPOPASTO </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="tdTablasBorde">Planta Centenario - Antigua Salida al Norte. PBX: +57 (2) 7215414 EXT. 11
+                    Pasto Colombia</td>
+            </tr>
+            <tr>
+                <th class="columnasTablaTitulos">FECHA EMISION INFORME:</th>
+                <th class="columnasTablaContenido">
+                    <? echo Form::text("fechaemision", "class='calendarios'") ?>
+
+                </th>
+                <th class="columnasTablaTitulos">CODIGO DEL INFORME</th>
+                <th class="columnasTablaContenido">
+                    <?echo $codigoinforme?>
+                </th>
+
+            </tr>
+
+            <tr>
+                <th class="columnasTablaTitulos">CLIENTE:</th>
+                <th class="columnasTablaContenido">
+                    <?php echo Form::hidden("cliente.cliente_id") ?>
+                    <?php echo Form::hidden("tipocliente_id") ?>
+                    <?php echo Form::text("cliente_auto_field", "class='combosGeneral'") ?>
+                </th>
+                <th class="columnasTablaTitulos">DEPARTAMENTO:</th>  
+                <th class="columnasTablaContenido">
+                    <? echo Form::text("tipodepartamento.tipodepartamento_id", "class='combosGeneral' readonly") ?>
+                </th>  
+
+            </tr>
+
+            <tr>
+                <th class="columnasTablaTitulos">MUNICIPIO:</th>  
+                <th class="columnasTablaContenido">
+                    <? echo Form::text("tipomunicipio.tipomunicipio_id", "class='combosGeneral' readonly") ?>
+                </th>  
+                <th class="columnasTablaTitulos">DIRECCION:</th>  
+                <th class="columnasTablaContenido" id="direccion_container">
+                </th>  
+
+            </tr>
+
+            <tr>
+                <th class="columnasTablaTitulos">TOMA DE MUESTRA A CARGO DE</th>  
+                <th class="columnasTablaContenido"><? echo Form::dbSelect("empresatomadormuestra.empresatomadormuestra_id", "nombre", null, "Seleccione", "class='combosGeneral'", 1) ?></th>  
+                <th class="columnasTablaTitulos">MUESTRA TOMADA POR:</th>  
+                <th class="columnasTablaContenido"><? echo Form::dbSelect("tomadormuestra.tomadormuestra_id", "nombre", null, "Seleccione", "class='combosGeneral'", "Seleccione") ?></th>  
+
+            </tr>
+
+            <td colspan="4" class="centrar" style="border-bottom: 1px solid #dddddd">
+                <button type="input" class="top-buffer btn btn-primary" >Guardar</button>
+
+            </td>
+
+
+        </table> </div>
+    <? echo Form::close() ?><div class="clearfix"></div><br>
+
+    <div class="col-sm-5 centrar divAgregarMuestra" id="main">
+
+        <div class="col-lg-5 nofloat"><? echo Form::dbSelect("tipomatrizanalizada.tipomatrizanalizada_id", "nombre", null, null, "class='combosGeneral'") ?> </div> 
+        <div class="col-lg-5 nofloat"><input type="button"  id="btAdd" value="Añadir muestra" class=" form-control btn btn-primary" />  </div> 
+
+    </div> <div class="clearfix"></div><br>
+
+    <div class="panel-muestras">
+        <div class="panel panel-default panelAguaCruda">
+            <div class="panel-heading tituloPanelAguaCruda"><h3 class="panel-title centrar">AGUA CRUDA</h3></div>
+            <div class="panel-body" id="aguacruda"></div>
+        </div>
+
+        <div class="panel panel-default panelAguaTratada">
+            <div class="panel-heading tituloPanelAguaTratada"><h3 class="panel-title centrar">AGUA TRATADA</h3></div>
+            <div class="panel-body" id="aguatratada"></div>
+        </div>
+
+        <div class="panel panel-default panelAguaResidual">
+            <div class="panel-heading tituloPanelAguaResidual"><h3 class="panel-title centrar">AGUA RESIDUAL</h3></div>
+            <div class="panel-body" id="aguaresidual"></div>
+        </div>
+        
+        <div class="panel panel-default panelQueja">
+            <div class="panel-heading tituloPanelQueja"><h3 class="panel-title centrar">QUEJA</h3></div>
+            <div class="panel-body" id="aguaQueja"></div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-4"><input type="button"  id="btnGrabarMuestras" value="Grabar muestra" class="top-buffer btn btn-primary" style="margin-bottom: 5%"/>  </div>
+
+
+    <script>
+        function SetupDatePickers() {
+            $('.calendarios').datepicker();
+            $('.calendarios').datepicker("option", "dateFormat", "yy-mm-dd", $.datepicker.regional['es']);
+        }
+
+        function UpdateSampleCode() {
+            var curDate = $('.muestra-date').datepicker('getDate');
+
+            if (curDate) {
+                var year = curDate.getYear() - 100;
+                var day = curDate.getDate();
+
+                [].forEach.call($('.panelAguaCruda .divMuestra'), function (item, index) {
+                    $(item).find('.codigoMuestra').val([
+                        year,
+                        'A',
+                        day,
+                        'C',
+                        index + 1
+                    ].join(''));
+                });
+                [].forEach.call($('.panelAguaTratada .divMuestra'), function (item, index) {
+                    $(item).find('.codigoMuestra').val([
+                        year,
+                        'A',
+                        day,
+                        'T',
+                        index + 1
+                    ].join(''));
+                });
+                [].forEach.call($('.panelAguaResidual .divMuestra'), function (item, index) {
+                    $(item).find('.codigoMuestra').val([
+                        year,
+                        'A',
+                        day,
+                        'R',
+                        index + 1
+                    ].join(''));
+                });
+                //criferlo
+                [].forEach.call($('.panelQueja .divMuestra'), function (item, index) {
+                    $(item).find('.codigoMuestra').val([
+                        year,
+                        'A',
+                        day,
+                        'R',
+                        index + 1
+                    ].join(''));
+                });
+            }
+            ;
+        }
+
+        $(function () {
+            var opt = [];
+
+            $("#cliente_auto_field").autocomplete({
+                minLength: 3,
+                delay: 50,
+                source: opt,
+                search: function (event, ui) {
+                    console.log(event);
+                    console.log(ui);
+                    console.log($("#cliente_auto_field").val());
+
+                    $.ajax({
+                        url: '<?php echo PUBLIC_PATH ?>home/filtrar_clientes',
+                        method: 'POST',
+                        data: {
+                            nombre: $("#cliente_auto_field").val()
+                        },
+                        success: function (result) {
+                            opt = JSON.parse(result);
+
+                            $("#cliente_auto_field").autocomplete("option", {source: opt});
+
+                            console.log(opt);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    })
+                },
+                select: function (event, ui) {
+                    $("#cliente_cliente_id").val(ui.item.id);
+                    $("#tipomunicipio_tipomunicipio_id").val(ui.item.municipio.nombre);
+                    $("#tipodepartamento_tipodepartamento_id").val(ui.item.departamento.nombre);
+                    $("#tipocliente_id").val(ui.item.tipocliente_id);
+
+                    setTimeout(function () {
+                        $("#cliente_auto_field").val(ui.item.nombre);
+                    }, 50);
+
+                    if (ui.item.tipocliente_id == 1) {
+                        var direcciones = [];
+
+                        direcciones.push("<select class='combosGeneral' name='lugartomamuestra'>");
+                        direcciones.push("<option>Seleccione la dirección</option>");
+
+                        [].forEach.call(ui.item.direcciones, function (item) {
+                            direcciones.push("<option value='" + item.nombre + "'>" + item.nombre + "</option>");
+                        });
+
+                        direcciones.push("</select>");
+
+                        $("#direccion_container").html(direcciones.join(''));
+                    } else {
+                        $("#direccion_container").html([
+                            "<input type='text' readonly class='combosGeneral'",
+                            "name='lugartomamuestra'",
+                            "value='",
+                            ui.item.direccion,
+                            "' />"
+                        ].join(''));
+                    }
+                    ;
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            var iCnt = 0;
+            var tipoagua = 0;
+            var formato_id = '<?php echo $formato_id ?>';
+            var tipocliente_id = '<?php echo $tipocliente_id ?>';
+
+            if (formato_id != 0 && tipocliente_id == 1) {
+                $("#tipomatrizanalizada_tipomatrizanalizada_id").val(1);
+                for (var i = 1; i <= 8; i++) {
+                    AgregarMuestra();
+                }
+                ;
+                $("#tipomatrizanalizada_tipomatrizanalizada_id").val(2);
+                for (var i = 1; i <= 3; i++) {
+                    AgregarMuestra();
+                }
+                ;
+            }
+            ;
+
+            SetupDatePickers();
+
+            $('.panel-muestras').change('.muestra-date', function (e) {
+                var fechas = [];
+
+                [].forEach.call($('.muestra-date'), function (dp) {
+                    if ($(dp).datepicker('getDate') != null) {
+                        if (fechas.length == 0) {
+                            fechas.push({
+                                fecha: $(dp).datepicker('getDate'),
+                                repetido: false
+                            });
+                        } else {
+                            var fc = fechas.find(function (item) {
+                                return item.fecha.toString() == $(dp).datepicker('getDate').toString();
+                            });
+
+                            if (!fc) {
+                                fechas.push({
+                                    fecha: $(dp).datepicker('getDate'),
+                                    repetido: false
+                                })
+                            } else {
+                                fc.repetido = true;
+                            }
+                        }
+                    }
+                });
+
+                var curDate = fechas.find(function (item) {
+                    return item.repetido == false;
+                });
+
+                if (curDate) {
+                    $('.muestra-date').datepicker('setDate', curDate.fecha);
+
+                    UpdateSampleCode();
+                }
+                ;
+            });
+
+            $('.panel-muestras').change('.tiempoRecepcion', function () {
+                var horas = [];
+
+                [].forEach.call($('.panel-muestras .tiempoRecepcion.horaRecepcion'), function (item) {
+                    var hora = $(item);
+                    var id = '#' + hora.attr('id');
+                    var min = $(id.split('horaRecepcion').join('minutosRecepcion'));
+
+                    if (horas.length == 0) {
+                        horas.push({
+                            hr: hora.val(),
+                            mn: min.val(),
+                            repetido: false
+                        });
+                    } else {
+                        var fc = horas.find(function (item) {
+                            var cm1 = [item.hr, item.mn].join('-');
+                            var cm2 = [hora.val(), min.val()].join('-');
+
+                            return cm1 == cm2;
+                        });
+
+                        if (!fc) {
+                            horas.push({
+                                hr: hora.val(),
+                                mn: min.val(),
+                                repetido: false
+                            })
+                        } else {
+                            fc.repetido = true;
+                        }
+                    }
+                });
+
+                var curTime = horas.find(function (item) {
+                    return item.repetido == false;
+                });
+
+                if (curTime) {
+                    $('.panel-muestras .tiempoRecepcion.horaRecepcion').val(curTime.hr);
+                    $('.panel-muestras .tiempoRecepcion.minutosRecepcion').val(curTime.mn);
+
+                    UpdateSampleCode();
+                }
+                ;
+            });
+
+            // Crear un elemento div aÃ±adiendo estilos CSS
+            $('#btAdd').click(AgregarMuestra);
+
+            function AgregarMuestra() {
+                var valorcombo = $("#tipomatrizanalizada_tipomatrizanalizada_id").val();
+
+                if (iCnt <= 19) {
+
+                    iCnt = iCnt + 1;
+
+                    var panelmuestra = '<div class="divMuestra" id="main' + iCnt + '"><div><input type="button" id="btRemove' + iCnt + '" value="X" class="btn btn-danger" /></div><div class="col-sm-5 centrar" ><div class="panel panel-default">\n\
+                <div class="panel-heading"><h3 class="panel-title centrar">Toma de muestra</h3></div>\n\
+                <div class="panel-body">\n\
+                 <div class="col-sm-5">\n\
+                   <div class="col-sm-3 nofloat"><label for="hora">Hora: </label></div>\n\
+                   <div class="col-sm-3 nofloat">\n\
+                     \n\<select id="horaToma' + iCnt + '" class="combosGeneralHtml"></select></div> \n\
+                     \n\<div class="col-sm-3 nofloat margenDerechaOnce"><select id="minutosToma' + iCnt + '"  class="combosGeneralHtml"></select></div></div>\n\
+                     <div class="col-sm-7"> \n\
+                       <label for="hora" class="col-sm-2 nofloat">Fecha</label>\n\
+                       <div class="col-sm-9 nofloat"> \n\
+                         <input type="text" name="fecha1" id="fechaToma' + iCnt + '" class="calendarios muestra-date"></div>\n\
+                       </div></div><div class="clearfix"><div class="col-sm-5 divTipoMuestra"><label for="hora" class="col-sm-12 centrar">Tipo Muestra</label><div class="col-sm-12">\n\
+                       <select id="tipoMuestra' + iCnt + '" class="combosGeneralHtml" style="width: 109%"></select></div></div><div class="col-sm-5 centrar "><label for="hora" class="col-sm-12 centrar">Codigo Muestra</label><div class="col-sm-12"><input type="text" id="codigoMuestra' + iCnt + '" class="form-control codigoMuestra" style="width: 118%" name="codigoMuestra"></div></div><div class="clearfix"></div></div></div></div>\n\
+                       \n\
+                       <div class="col-sm-7  centrar">\n\
+                        <div class="panel panel-default">\n\
+                         <div class="panel-heading">\n\
+                           <h3 class="panel-title centrar">Recepcion de la muestra</h3></div>\n\
+                           <div class="panel-body">\n\
+                             <div class="col-sm-4"> \n\
+                               <div class="col-sm-3 nofloat"><label for="hora">Hora:</label></div>\n\
+                               <div class="col-sm-4 nofloat">\n\
+                                 <select id="horaRecepcion' + iCnt + '" class="combosGeneralHtml tiempoRecepcion horaRecepcion"></select></div>\n\
+                                 <select id="minutosRecepcion' + iCnt + '"  class="combosGeneralHtml tiempoRecepcion minutosRecepcion margenDerechacinco"></select></div>\n\
+                                 <div class="col-sm-5">  <label for="hora" class="col-sm-2 nofloat">Fecha</label>\n\
+                                   <div class="col-sm-8 nofloat"> <input type="text" name="fecha2" id="fechaRecepcion' + iCnt + '" class="calendarios muestra-date"> </div></div>\n\
+                                   <div class="col-sm-3"><input type="hidden" name="oculto" value="tipomuestra" id="tipoagua' + iCnt + '"></div> \n\
+                                 </div><div class="clearfix"><div class="col-sm-12 centrar" style="padding-bottom: 2%"><label for="hora">Lugar Toma Muestra</label><div class="col-sm-12"><select style="width: 62%;" id="lugartomamuestra' + iCnt + '"  class="combosGeneralHtml margenDerechacinco"></select></div></div></div>';
+
+                    if (valorcombo == 2)
+                    {
+                        tipoagua = 2;
+
+                        var lugares =
+                                $(aguacruda).append(panelmuestra);
+
+                        var combos = document.getElementById("horaToma" + iCnt);
+                        var comboHora2 = document.getElementById("horaRecepcion" + iCnt);
+
+                        for (var i = 0; i < 24; i++)
+                        {
+
+                            combos.options[i] = new Option(i, i);
+                            comboHora2.options[i] = new Option(i, i);
+                        }
+
+                        var combosMinutos = document.getElementById("minutosToma" + iCnt);
+                        var combosMinutos2 = document.getElementById("minutosRecepcion" + iCnt);
+
+                        for (var i = 0; i < 61; i++)
+                        {
+
+                            combosMinutos.options[i] = new Option(i, i);
+                            combosMinutos2.options[i] = new Option(i, i);
+                        }
+
+                        var selector = document.getElementById("lugartomamuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/darlugartomamuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selector.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+
+                        var selectortipo = document.getElementById("tipoMuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/dartipomuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selectortipo.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+                    }
+                    if (valorcombo == 1)
+                    {
+                        tipoagua = 1;
+                        $(aguatratada).append(panelmuestra);
+                        var combos = document.getElementById("horaToma" + iCnt);
+                        var comboHora2 = document.getElementById("horaRecepcion" + iCnt);
+                        for (var i = 0; i < 25; i++)
+                        {
+
+                            combos.options[i] = new Option(i, i);
+                            comboHora2.options[i] = new Option(i, i);
+                        }
+
+                        var combosMinutos = document.getElementById("minutosToma" + iCnt);
+                        var combosMinutos2 = document.getElementById("minutosRecepcion" + iCnt);
+
+                        for (var i = 0; i < 61; i++)
+                        {
+
+                            combosMinutos.options[i] = new Option(i, i);
+                            combosMinutos2.options[i] = new Option(i, i);
+                        }
+
+                        var selector = document.getElementById("lugartomamuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/darlugartomamuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selector.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+
+                        var selectortipo = document.getElementById("tipoMuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/dartipomuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selectortipo.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+                    }
+                    if (valorcombo == 3)
+                    {
+                        tipoagua = 3;
+                        $(aguaresidual).append(panelmuestra);
+                        var combos = document.getElementById("horaToma" + iCnt);
+                        var comboHora2 = document.getElementById("horaRecepcion" + iCnt);
+
+                        for (var i = 0; i < 25; i++)
+                        {
+
+                            combos.options[i] = new Option(i, i);
+                            comboHora2.options[i] = new Option(i, i);
+                        }
+
+                        var combosMinutos = document.getElementById("minutosToma" + iCnt);
+                        var combosMinutos2 = document.getElementById("minutosRecepcion" + iCnt);
+
+                        for (var i = 0; i < 61; i++)
+                        {
+
+                            combosMinutos.options[i] = new Option(i, i);
+                            combosMinutos2.options[i] = new Option(i, i);
+                        }
+
+                        var selector = document.getElementById("lugartomamuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/darlugartomamuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selector.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+
+                        var selectortipo = document.getElementById("tipoMuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/dartipomuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selectortipo.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+                    }
+                    //criferlo
+                    if (valorcombo == 4)
+                    {
+                        tipoagua = 4;
+                        $(aguaQueja).append(panelmuestra);
+                        var combos = document.getElementById("horaToma" + iCnt);
+                        var comboHora2 = document.getElementById("horaRecepcion" + iCnt);
+
+                        for (var i = 0; i < 25; i++)
+                        {
+
+                            combos.options[i] = new Option(i, i);
+                            comboHora2.options[i] = new Option(i, i);
+                        }
+
+                        var combosMinutos = document.getElementById("minutosToma" + iCnt);
+                        var combosMinutos2 = document.getElementById("minutosRecepcion" + iCnt);
+
+                        for (var i = 0; i < 61; i++)
+                        {
+
+                            combosMinutos.options[i] = new Option(i, i);
+                            combosMinutos2.options[i] = new Option(i, i);
+                        }
+
+                        var selector = document.getElementById("lugartomamuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/darlugartomamuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selector.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+
+                        var selectortipo = document.getElementById("tipoMuestra" + iCnt);
+
+                        $.getJSON("<?php echo PUBLIC_PATH ?>home/dartipomuestra", function (result) {
+                            $.each(result, function (i, field) {
+                                selectortipo.options[i] = new Option(field.nombre, field.id);
+                            });
+                        });
+                    }
+
+
+                    $('#tipoagua' + iCnt).val(tipoagua);
+
+                    if (iCnt == 1) {
+
+                        var divSubmit = $(document.createElement('div'));
+                        $(divSubmit).append('<input type=button class="bt" onclick="GetTextValue()"' +
+                                'id=btSubmit value=Enviar />');
+
+                    }
+
+                    //                $('#main').after(container, divSubmit);
+                    $('#btRemove' + iCnt).click(function () { // Elimina un elemento por click
+
+                        if (iCnt != 0) {
+                            $('#main' + iCnt).remove();
+                            iCnt = iCnt - 1;
+                            UpdateSampleCode();
+                        }
+                    });
+                }
+
+                else { //se establece un limite para aÃ±adir elementos, 20 es el limite
+
+                    $(aguacruda).append('<label>Limite Alcanzado</label>');
+                    $('#btAdd').attr('class', 'bt-disable');
+                    $('#btAdd').attr('disabled', 'disabled');
+
+                }
+
+                SetupDatePickers();
+                UpdateSampleCode();
+            }
+
+
+            $("#btnGrabarMuestras").click(function () {
+
+                var formato_id = "<?php echo $formato_id; ?>";
+
+                if (iCnt == 0) {
+                    alert("No se han registrado muestras");
+                } else {
+                    var i = 0;
+                    alert("cantidad:" + iCnt);
+                    var arrayMuestras = [];
+                    for (i = 1; i <= iCnt; i++) {
+
+                        var datos =
+                                {
+                                    fechatoma: $('#fechaToma' + i).val(),
+                                    horatoma: $('#horaToma' + i).val() + ":" + $('#minutosToma' + i).val(),
+                                    fecharecepcion: $('#fechaRecepcion' + i).val(),
+                                    horarecepcion: $('#horaRecepcion' + i).val() + ":" + $('#minutosRecepcion' + i).val(),
+                                    tipomatriz: $('#tipoagua' + i).val(),
+                                    tipomuestra: $('#tipoMuestra' + i).val(),
+                                    codigomuestra: $('#codigoMuestra' + i).val(),
+                                    lugarmuestra: $('#lugartomamuestra' + i).val(),
+                                    formato_id: formato_id,
+                                };
+
+                        arrayMuestras.push(datos);
+
+
+                        //de la misma manera llamar a los otros elementos del mismo panel
+                    }
+
+                    $.ajax({
+                        url: '<?php echo PUBLIC_PATH ?>cabecerarest/',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(arrayMuestras)
+                    }).done(function (data)
+                    {
+                        // Estamos utilizando el método .done(), pero debo apuntar que jQuery nos provee de varios métodos callback para distintos fines
+                        // En data además viene la respuesta del PHP
+                        //console.log(data);
+                        window.location = "cabecerag/" + formato_id
+                    }).complete(function (data) {
+                        //alert("hola");
+                    });
+
+
+                    //var ss = JSON.stringify(arrayMuestras);
+                    //alert(ss);
+                }
+            });
+        });
+    </script>
+
+

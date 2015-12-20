@@ -1,0 +1,134 @@
+          <?echo View::content()?>
+<?php 
+  $t = 1;
+  $c = 1;
+  $r = 1;
+?>
+<table class="table table-striped" id="table-acidez">
+  <thead>
+    <tr>
+      <th class="text-center">IDENTIFICACION<br>MUESTRA</th>
+      <th class="text-center">VOLUMEN NaOH<br>GASTADO (mL)</th>
+
+      <th class="text-center">NORMALIDAD<br>NaOH</th>
+      <th class="text-center">PESO Eq - g<br>CaCO3</th>
+      <th class="text-center">FACTOR DE CONVERSIÓN<br>(g - mg)</th>
+
+      <th class="text-center">ACIDEZ<br>(mgCaCO3/L)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($muestras as $ms): ?>
+      <?php
+        $index = 1;
+
+        switch ($ms->getTipomatrizanalizada()->abrv) {
+          case 'T':
+              $index = $t;
+              $t++;
+              break;
+          case 'C':
+              $index = $c;
+              $c++;
+              break;
+          case 'R':
+              $index = $r;
+              $r++;
+              break;
+        }
+
+        $indicador = $ms->getTipomatrizanalizada()->abrv.$index;
+      ?>
+      <tr data-id_muestra="<?php echo $ms->id ?>">
+        <td class="text-center"><?php echo $indicador ?></td>
+        <td style="display: none;"><?php echo $constantes[0]->valor ?></td>
+        <td><?php 
+        //criferlo
+        $mmc = new Muestramemoriacalculo();
+        $xarr = array();
+        $xarr = $mmc->find("muestra_id=".$ms->id);
+        $xvalor1=0;
+        $xresultado=0;
+        
+        //Flash::info($ms->id);                
+        
+        foreach($xarr as $xobj){
+            if($xobj->tipoensayo_id=="2"){
+                $xvalor1= $xobj->valor1;
+                $xresultado = $xobj->resultado;
+                break;
+            }
+        }
+        //criferlo
+        
+        echo
+        Form::number(
+            "Acidez_$indicador",
+            "class='form-control fullwidth acidez-input' placeholder='Volumen $indicador (mL)'",
+                $xvalor1
+                
+        )?></td>
+        <td class="text-center"><?php echo $constantes[1]->valor ?></td>
+        <td class="text-center"><?php echo $constantes[2]->valor ?></td>
+        <td class="text-center"><?php echo $constantes[3]->valor ?></td>
+        <td><?php echo
+        Form::number(
+            "Acidez_Out_$indicador",
+            "class='form-control fullwidth acidez-out' readonly placeholder='Acidez $indicador (mgCaCO3/L)'",
+                $xresultado
+        )?></td>
+      </tr>
+    <?php endforeach ?>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  $('.acidez-input').on('keyup', function(e) {
+    CalcularAcidez($(this));
+  });
+
+  $('.acidez-input').on('change', function(e) {
+    CalcularAcidez($(this));
+  });
+
+  function CalcularAcidez(input) {
+    var indicador = input.attr('id').split('_')[1];
+    var inputOut  = $(['#Acidez_Out', indicador].join('_'));
+
+    var C = GetValue(input.parents()[1], 1);
+    var D = input.val();
+    var E = GetValue(input.parents()[1], 3);
+    var F = GetValue(input.parents()[1], 4);
+    var G = GetValue(input.parents()[1], 5);
+
+    inputOut.val(D*E*F*G/C);
+  }
+
+  function GetCell(tr, colIndex) {
+    var childs = $(tr).children();
+
+    return $(childs[colIndex]);
+  }
+
+  function GetValue(tr, colIndex) {
+    var number = new Number(GetCell(tr, colIndex).html());
+
+    return number.valueOf();
+  }
+
+  function SetValue(tr, colIndex, value) {
+    $($(tr).children()[colIndex]).html(value)
+  }
+
+  function GenerateJsonAcidez(muestra_id) {
+    var tr = $('#table-acidez tr[data-id_muestra=' + muestra_id + ']');
+    var data = {};
+
+    data.muestra_id    = muestra_id;
+    data.valor1        = $(GetCell(tr, 2).children()[0]).val();
+    data.resultado     = $(GetCell(tr, 6).children()[0]).val();
+    data.tipoensayo_id = 2;
+
+    return data;
+  }
+</script>

@@ -1,0 +1,271 @@
+<?php
+echo View::content();
+$columnsConfig = array();
+
+$columnsConfig[] = array('col' => 'A', 'width' => 10);
+$columnsConfig[] = array('col' => 'B', 'width' => 6);
+$columnsConfig[] = array('col' => 'C', 'width' => 4);
+$columnsConfig[] = array('col' => 'D', 'width' => 1);
+$columnsConfig[] = array('col' => 'E', 'width' => 16);
+$columnsConfig[] = array('col' => 'F', 'width' => 7);
+$columnsConfig[] = array('col' => 'G', 'width' => 8);
+$columnsConfig[] = array('col' => 'H', 'width' => 8);
+$columnsConfig[] = array('col' => 'I', 'width' => 0);
+$columnsConfig[] = array('col' => 'J', 'width' => 21);
+$columnsConfig[] = array('col' => 'K', 'width' => 12);
+$columnsConfig[] = array('col' => 'L', 'width' => 14);
+$columnsConfig[] = array('col' => 'M', 'width' => 20);
+$columnsConfig[] = array('col' => 'N', 'width' => 19);
+$columnsConfig[] = array('col' => 'O', 'width' => 19);
+$columnsConfig[] = array('col' => 'P', 'width' => 19);
+$columnsConfig[] = array('col' => 'Q', 'width' => 16);
+$columnsConfig[] = array('col' => 'R', 'width' => 16);
+$columnsConfig[] = array('col' => 'S', 'width' => 16);
+$columnsConfig[] = array('col' => 'T', 'width' => 16);
+$columnsConfig[] = array('col' => 'U', 'width' => 16);
+$columnsConfig[] = array('col' => 'V', 'width' => 16);
+$columnsConfig[] = array('col' => 'W', 'width' => 16);
+$columnsConfig[] = array('col' => 'X', 'width' => 16);
+$columnsConfig[] = array('col' => 'Y', 'width' => 10);
+$columnsConfig[] = array('col' => 'Z', 'width' => 6);
+$columnsConfig[] = array('col' => 'AA', 'width' => 4);
+$columnsConfig[] = array('col' => 'AB', 'width' => 1);
+$columnsConfig[] = array('col' => 'AC', 'width' => 16);
+$columnsConfig[] = array('col' => 'AD', 'width' => 7);
+$columnsConfig[] = array('col' => 'AE', 'width' => 8);
+$columnsConfig[] = array('col' => 'AF', 'width' => 8);
+$columnsConfig[] = array('col' => 'AG', 'width' => 0);
+$columnsConfig[] = array('col' => 'AH', 'width' => 21);
+$columnsConfig[] = array('col' => 'AI', 'width' => 12);
+$columnsConfig[] = array('col' => 'AJ', 'width' => 14);
+$columnsConfig[] = array('col' => 'AK', 'width' => 20);
+$columnsConfig[] = array('col' => 'AL', 'width' => 19);
+$columnsConfig[] = array('col' => 'AM', 'width' => 18);
+$columnsConfig[] = array('col' => 'AN', 'width' => 19);
+$columnsConfig[] = array('col' => 'AO', 'width' => 16);
+$columnsConfig[] = array('col' => 'AP', 'width' => 16);
+$columnsConfig[] = array('col' => 'AQ', 'width' => 16);
+$columnsConfig[] = array('col' => 'AR', 'width' => 16);
+$columnsConfig[] = array('col' => 'AS', 'width' => 16);
+$columnsConfig[] = array('col' => 'AT', 'width' => 16);
+$columnsConfig[] = array('col' => 'AU', 'width' => 16);
+$columnsConfig[] = array('col' => 'AV', 'width' => 16);
+
+function generarFormato($sheet, $formato) {
+    $columnsConfig = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV');
+    $ircas = Load::model('irca')->find();
+
+    $sheet
+            ->setCellValue("G9", '2015/08/04')
+            ->setCellValue("G10", $formato->getCliente()->nombre)
+            ->setCellValue("G11", 'PASTO')
+            ->setCellValue("G12", $formato->getEmpresatomadormuestra()->nombre)
+            ->setCellValue("Q9", $formato->codigo)
+            ->setCellValue("Q10", 'NARIÑO')
+            ->setCellValue("Q11", $formato->lugartomamuestra)
+            ->setCellValue("Q12", $formato->getTomadormuestra()->nombre)
+            ->setCellValue("AE9", '2015/08/04')
+            ->setCellValue("AE10", $formato->getCliente()->nombre)
+            ->setCellValue("AE11", 'PASTO')
+            ->setCellValue("AE12", $formato->getEmpresatomadormuestra()->nombre)
+            ->setCellValue("AO9", $formato->codigo)
+            ->setCellValue("AO10", 'NARIÑO')
+            ->setCellValue("AO11", $formato->lugartomamuestra)
+            ->setCellValue("AO12", $formato->getTomadormuestra()->nombre);
+
+    //Aquiestaba
+
+    //$sheet->removeRow(27, 48 - count($formato->getTempformatotipoensayo()));
+
+    $numfilas1 = 27;
+
+    foreach ($formato->getTempformatotipoensayo() as $tmp) {
+        $val1 = $tmp->getTipoensayo()->nombre;
+        $val2 = $formato->fechaemision;
+        $val3 = $tmp->getTipoensayo()->getTecnicaanalitica()->nombre;
+        $val4 = $tmp->getTipoensayo()->getMetodo()->nombre;
+        $val5 = $tmp->getTipoensayo()->getUnidad()->nombre;
+        $val6 = $tmp->getTipoensayo()->limitedeteccion;
+        
+        if($tmp->tipoensayo_id!=50 && $tmp->tipoensayo_id!=49){
+             $sheet
+                ->setCellValue("A$numfilas1", "$val1")
+                ->setCellValue("E$numfilas1", "$val2")
+                ->setCellValue("F$numfilas1", "$val3")
+                ->setCellValue("J$numfilas1", "$val4")
+                ->setCellValue("K$numfilas1", "$val5")
+                ->setCellValue("M$numfilas1", "$val6")
+                ->setCellValue("Y$numfilas1", "$val1")
+                ->setCellValue("AC$numfilas1", "$val2")
+                ->setCellValue("AD$numfilas1", "$val3")
+                ->setCellValue("AH$numfilas1", "$val4")
+                ->setCellValue("AI$numfilas1", "$val5")
+                ->setCellValue("AK$numfilas1", "$val6");
+        }
+       
+
+        $numcolumnas1 = 16;
+        $numcolumnas2 = 40;
+
+        foreach ($formato->getMuestra() as $muestra) {
+            //Flash::info("tipoensayo".$tmp->tipoensayo_id);
+            //if ($tmp->tipoensayo_id != "50") {
+                $memoria = ubicarMuestraMemoria($muestra->getMuestramemoriacalculo(), $tmp->tipoensayo_id);
+
+                //Flash::info(count($memoria));
+                if (isset($memoria)) {
+                    switch ($tmp->tipoensayo_id) {
+                        case 5://calcio
+                            $valor = $memoria->resultado;
+                            break;
+                        case 21://dureza magnasica
+                            $valor = $memoria->resultado;
+                            break;
+                        case 29://magnesio
+                            $valor = $memoria->resultado;
+                            break;
+                        default:
+                            $valor = $memoria->resultado;
+                            break;
+                    }
+                    //Flash::info($valor);
+                } else {
+                    $valor = " ";
+                }
+
+
+                if ($muestra->tipomatrizanalizada_id == 1) {
+                    //if (isset($columnsConfig[$numcolumnas1]["col"])) {
+                    //Flash::info($columnsConfig[$numcolumnas1]."$numfilas1");
+
+                    $sheet
+                            //->setCellValue($columnsConfig[$numcolumnas1]["col"]."$numfilas1", $valor);
+                            ->setCellValue($columnsConfig[$numcolumnas1] . "$numfilas1", $valor);
+                    $numcolumnas1 = $numcolumnas1 + 1;
+                    //}
+                } else {
+                    //if (isset($columnsConfig[$numcolumnas2]["col"])) {
+                    //Flash::info($columnsConfig[$numcolumnas2]."$numfilas1");
+
+                    $sheet
+                            //->setCellValue($columnsConfig[$numcolumnas2]["col"]."$numfilas1", $valor);
+                            ->setCellValue($columnsConfig[$numcolumnas2] . "$numfilas1", $valor);
+                    $numcolumnas2 = $numcolumnas2 + 1;
+                    //}
+                }
+            //}//finfor
+        }
+
+        $numfilas1 = $numfilas1 + 1;
+    }
+    
+    $numfilas1 = 15;
+    $numcolumnas1 = 16;
+    $numfilas2 = 15;
+    $numcolumnas2 = 40;
+    
+    foreach ($formato->getMuestra() as $muestra) {
+        if ($muestra->tipomatrizanalizada_id == 1) {
+            $sheet
+                    ->setCellValue("A$numfilas1", $muestra->tomamuestra_hora)
+                    ->setCellValue("C$numfilas1", $muestra->tomamuestra_fecha)
+                    ->setCellValue("G$numfilas1", $muestra->recepcionmuestra_hora)
+                    ->setCellValue("I$numfilas1", $muestra->recepcionmuestra_fecha)
+                    ->setCellValue("L$numfilas1", strtoupper($muestra->getTipomatrizanalizada()->nombre))
+                    ->setCellValue("O$numfilas1", strtoupper($muestra->getTipomuestra()->nombre))
+                    ->setCellValue("P$numfilas1", $muestra->codigomuestra)
+                    ->setCellValue("R$numfilas1", strtoupper($muestra->getLugartomamuestra()->nombre))
+                    ->setCellValue($columnsConfig[$numcolumnas1] . "26", $muestra->codigomuestra)
+                    ->setCellValue($columnsConfig[$numcolumnas1] . "75", calcularIrca($ircas, $muestra));
+
+            $numfilas1 = $numfilas1 + 1;
+            $numcolumnas1 = $numcolumnas1 + 1;
+        } else {
+            $sheet
+                    ->setCellValue("Y$numfilas2", $muestra->tomamuestra_hora)
+                    ->setCellValue("AA$numfilas2", $muestra->tomamuestra_fecha)
+                    ->setCellValue("AE$numfilas2", $muestra->recepcionmuestra_hora)
+                    ->setCellValue("AG$numfilas2", $muestra->recepcionmuestra_fecha)
+                    ->setCellValue("AJ$numfilas2", strtoupper($muestra->getTipomatrizanalizada()->nombre))
+                    ->setCellValue("AM$numfilas2", strtoupper($muestra->getTipomuestra()->nombre))
+                    ->setCellValue("AN$numfilas2", $muestra->codigomuestra)
+                    ->setCellValue("AP$numfilas2", strtoupper($muestra->getLugartomamuestra()->nombre))
+                    ->setCellValue($columnsConfig[$numcolumnas2] . "26", $muestra->codigomuestra);
+
+            $numfilas2 = $numfilas2 + 1;
+            $numcolumnas2 = $numcolumnas2 + 1;
+        }
+    }//endfor
+    
+    
+    
+    return $sheet;
+}
+
+function ubicarMuestraMemoria($memorias, $tipoensayo_id) {
+    $memoria = null;
+
+    foreach ($memorias as $mem) {
+        if ($mem->tipoensayo_id == $tipoensayo_id) {
+            $memoria = $mem;
+            break;
+        }
+    }
+
+    return $memoria;
+}
+
+function calcularIrca($ircas, $muestra) {
+    $ptoRiesgo = 0;
+    $totalRiesgo = 0;
+
+    foreach ($ircas as $irca) {
+        $totalRiesgo = $totalRiesgo + $irca->puntajeriesgo;
+        foreach ($muestra->getMuestramemoriacalculo() as $mem) {
+            if ($mem->tipoensayo_id == $irca->tipoensayo_id) {
+                if (!($mem->resultado >= $irca->limiteinferior && $mem->resultado <= $irca->limitesuperior)) {
+                    $ptoRiesgo = $ptoRiesgo + $irca->puntajeriesgo;
+                }
+            }
+        }
+    }
+
+    return $ptoRiesgo / $totalRiesgo;
+}
+?>
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+ini_set('display_startup_errors', TRUE);
+date_default_timezone_set('America/Bogota');
+set_time_limit(0);
+
+if (PHP_SAPI == 'cli')
+    die('Este reporte solo se puede ejecutar desde un navegador web');
+
+$objPHPExcel = PHPExcel_IOFactory::load(APP_PATH . '/extensions/formats/formato.xlsx');
+
+$codigo = '0000' . $formato->codigoinformesecuencial;
+$formato->codigo = $formato->codigoinformeleyenda . ' ' . $formato->codigoinformeano . '-' . substr($codigo, -4);
+
+$objPHPExcel->getDefaultStyle()->getFont()
+        ->setName('Arial')
+        ->setSize(16)
+        ->setBold(false);
+
+$newSheet = $objPHPExcel->getActiveSheet();
+$newSheet->setTitle($codigo);
+
+
+generarFormato($newSheet, $formato);
+
+$nombre = 'reportes/formato.xlsx';
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+$objWriter->save($nombre);
+?>
+
+<div class="container">
+    <?php echo "<a href='" . PUBLIC_PATH . $nombre . "' download='descargar'>Descargar reporte en Excel</a>"; ?>
+</div>
+
