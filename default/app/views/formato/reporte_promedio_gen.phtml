@@ -1,0 +1,142 @@
+<?php
+function UbicarFilaTipoEnsayo($sheet, $tipoEnsayo)
+{
+  for ($i=25; $i < 200; $i++) {
+    if ($sheet->getCell("A$i")->getValue() == $tipoEnsayo) {
+      return $i;
+    }
+  }
+
+  return null;
+}
+
+function cargarReportesDia($formato)
+{
+  return $formato;
+}
+
+function calcularPromedio($sheet, $colIni, $colFin, $fila)
+{
+  $numItems   = 0;
+  $turbiedad  = 0;
+  $resultados = array();
+
+  $rowTURBIEDAD = UbicarFilaTipoEnsayo($sheet, "TURBIEDAD");
+  $rowCOLOR_APARENTE = UbicarFilaTipoEnsayo($sheet, "COLOR APARENTE");
+
+  $rowOLOR = UbicarFilaTipoEnsayo($sheet, "OLOR");
+  $rowSABOR = UbicarFilaTipoEnsayo($sheet, "SABOR");
+  $rowSUSTANCIAS_FLOTANTES = UbicarFilaTipoEnsayo($sheet, "SUSTANCIAS_FLOTANTES");
+
+  $rowCONDUCTIVIDAD = UbicarFilaTipoEnsayo($sheet, "CONDUCTIVIDAD");
+  $rowALCALINIDAD = UbicarFilaTipoEnsayo($sheet, "ALCALINIDAD");
+  $rowDUREZA = UbicarFilaTipoEnsayo($sheet, "DUREZA");
+  $rowpH = UbicarFilaTipoEnsayo($sheet, "PH");
+  $rowHIERRO = UbicarFilaTipoEnsayo($sheet, "HIERRO");
+  $rowCLORUROS = UbicarFilaTipoEnsayo($sheet, "CLORUROS");
+  $rowSULFATOS = UbicarFilaTipoEnsayo($sheet, "SULFATOS");
+  $rowNITRITOS = UbicarFilaTipoEnsayo($sheet, "NITRITOS");
+  $rowCLORO_RESIDUAL = UbicarFilaTipoEnsayo($sheet, "CLORO RESIDUAL");
+
+  $fila += 7;
+
+  $resultados["O"] = 0;
+  $resultados["P"] = 10000000;
+
+  for ($i = $colIni; $i <= $colFin ; $i++) {
+    $numItems += 1;
+
+    if (isset($rowTURBIEDAD)) { $resultados["B"] += $resultados["B"] + $sheet->getCell($i.$rowTURBIEDAD) ->getValue(); }
+    if (isset($rowCOLOR_APARENTE)) { $resultados["C"] += $resultados["C"] + $sheet->getCell($i.$rowCOLOR_APARENTE) ->getValue(); }
+    if (isset($rowOLOR)) { $resultados["D"] += $resultados["D"] + $sheet->getCell($i.$rowOLOR) ->getValue(); }
+    if (isset($rowSABOR)) { $resultados["E"] += $resultados["E"] + $sheet->getCell($i.$rowSABOR) ->getValue(); }
+    if (isset($rowSUSTANCIAS_FLOTANTES)) { $resultados["F"] += $resultados["F"] + $sheet->getCell($i.$rowSUSTANCIAS_FLOTANTES) ->getValue(); }
+    if (isset($rowpH)) { $resultados["J"] += $resultados["J"] + $sheet->getCell($i.$rowpH) ->getValue(); }
+    if (isset($rowHIERRO)) { $resultados["K"] += $resultados["K"] + $sheet->getCell($i.$rowHIERRO) ->getValue(); }
+    if (isset($rowCLORUROS)) { $resultados["L"] += $resultados["L"] + $sheet->getCell($i.$rowCLORUROS) ->getValue(); }
+    if (isset($rowSULFATOS)) { $resultados["M"] += $resultados["M"] + $sheet->getCell($i.$rowSULFATOS) ->getValue(); }
+    if (isset($rowNITRITOS)) { $resultados["N"] += $resultados["N"] + $sheet->getCell($i.$rowNITRITOS) ->getValue(); }
+    if (isset($rowCLORO_RESIDUAL)) {
+      $cloroRes = $sheet->getCell($i.$rowCLORO_RESIDUAL) ->getValue();
+      $resultados["O"] = $resultados["O"] < $cloroRes ? $cloroRes : $resultados["O"];
+      $resultados["P"] = $resultados["P"] > $cloroRes ? $cloroRes : $resultados["P"];
+    }
+  }
+
+  $resultados["G"] = "ACEPTABLE";
+  $resultados["H"] = "ACEPTABLE";
+  $resultados["I"] = "AUSENTES";
+
+  foreach ($resultados as $key => $value) {
+    if ($key != "G" && $key != "H" && $key != "I" && $key != "O" && $key != "P") {
+      $resultados[$key] = $value / $numItems;
+    }
+
+    $sheet->setCellValue("$key$fila", $value);
+  }
+}
+
+function generarResumen($book)
+{
+  $posIrca = 2;
+
+  for ($i=1; $i <=31 ; $i++) {
+    if ($book->sheetNameExists("$i")) {
+      $currentSheet = $book->getSheet($i + 3);
+      $dia          = $currentSheet->getTitle();
+
+      calcularPromedio($book->getSheet(0), "Q", "T", $i);
+      calcularPromedio($book->getSheet(1), "U", "V", $i);
+      calcularPromedio($book->getSheet(2), "W", "X", $i);
+
+      $filaIrca = UbicarFilaTipoEnsayo($currentSheet, "IRCA");
+
+      if (isset($filaIrca)) {
+        $valor = 0;
+
+        for ($col="Q"; $col <= "X" ; $col++) {
+          $valor += $currentSheet->getCell($col.$filaIrca)->getValue();
+        }
+
+        $book->getSheetByName("IRCA")
+          ->setCellValue("A$posIrca", $dia)
+          ->setCellValue("B$posIrca", $valor);
+
+        $posIrca += 1;
+      }
+    }
+  }
+}
+?>
+
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+ini_set('display_startup_errors', TRUE);
+date_default_timezone_set('America/Bogota');
+set_time_limit(0);
+
+if (PHP_SAPI == 'cli')
+    die('Este reporte solo se puede ejecutar desde un navegador web');
+
+$objPHPExcel = PHPExcel_IOFactory::load(APP_PATH . '/extensions/formats/promedio_red.xlsx');
+
+// $codigo = '0000' . $formato->codigoinformesecuencial;
+// $formato->codigo = $formato->codigoinformeleyenda . ' ' . $formato->codigoinformeano . '-' . substr($codigo, -4);
+
+$objPHPExcel->getDefaultStyle()->getFont()
+        ->setName('Arial')
+        ->setSize(16)
+        ->setBold(false);
+
+$newSheet = $objPHPExcel->getActiveSheet();
+// $newSheet->setTitle($codigo);
+
+$book = cargarReportesDia($objPHPExcel);
+generarResumen($book);
+
+$nombre = 'promedios/promedio.xlsx';
+
+$objWriter = PHPExcel_IOFactory::createWriter($book, 'Excel2007');
+$objWriter->save($nombre);
+?>

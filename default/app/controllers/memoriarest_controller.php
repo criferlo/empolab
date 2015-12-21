@@ -16,8 +16,8 @@ class MemoriarestController extends RestController {
     //put your code here
     public function post(){
         $this->data = $this->param();
-        foreach ($this->data as $ms) {
-            
+        foreach ($this->data as $ms)
+        {
             $mmc = new Muestramemoriacalculo();
 
             $mmc->muestra_id    = $ms['muestra_id'];
@@ -29,18 +29,15 @@ class MemoriarestController extends RestController {
             $mmc->resultado     = $ms['resultado'];
             $mmc->tipoensayo_id = $ms['tipoensayo_id'];
 
-            $mmc->save();            
-            
+            $mmc->save();
         }
     }
-    
+
     public function delete($id){
         $this->data = $this->param();
         foreach ($this->data as $ms) {
-            
             $mmc = new Muestramemoriacalculo();
-            $mmc->delete("muestra_id=".$ms["muestra_id"]);            
-            
+            $mmc->delete("muestra_id=".$ms["muestra_id"]);
         }
     }
 }

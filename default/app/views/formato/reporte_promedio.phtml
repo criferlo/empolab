@@ -1,0 +1,20 @@
+<div class="container">
+  <h1><?php echo $titulo ?></h1>
+  <br>
+  <br>
+  <br>
+  <?php echo Form::open('formato/reporte_gen', 'POST') ?>
+    <?php echo Form::hidden('tipo-reporte', null, $tipoReporte) ?>
+    <div class="form-group">
+      <label for="year" class="label-form">Seleccione el año del reporte</label>
+      <?php echo Form::select("year", $years, 'class="form-control"') ?>
+    </div>
+    <div class="form-group">
+      <label for="month" class="label-form">Seleccione el mes del reporte</label>
+      <?php echo Form::select("month", $months, 'class="form-control"') ?>
+    </div>
+    <div class="form-group text-right">
+      <button type="submit" class="btn btn-success">Generar reporte</button>
+    </div>
+  <?php echo Form::close() ?>
+</div>

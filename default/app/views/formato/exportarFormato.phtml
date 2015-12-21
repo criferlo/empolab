@@ -259,7 +259,7 @@ $newSheet->setTitle($codigo);
 
 generarFormato($newSheet, $formato);
 
-$nombre = 'reportes/formato.xlsx';
+$nombre = 'reportes/formato_'.$formato->id.'.xlsx';
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 $objWriter->save($nombre);

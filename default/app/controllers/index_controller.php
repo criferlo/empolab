@@ -16,7 +16,7 @@ class IndexController extends AppController
 
   public function index()
   {
-    // Router::redirect("login/index");
+     Router::redirect("home/index");
   }
 
 }

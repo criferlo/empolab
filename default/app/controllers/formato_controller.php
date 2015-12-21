@@ -112,45 +112,67 @@ class FormatoController extends AppController
     
     //le envian formato id y el carga el formato
     //con los valores de base de datos
-    public function modificar($id){
-        $formato      = new Formato();
-        $muestra      = new Muestra();
-        $tipoEnsayo   = new Tipoensayo();
-        $identMuestra = array();
+    public function modificar($id)
+    {
+        $formato                    = new Formato();
+        $muestra                    = new Muestra();
+        $tipoEnsayo                 = new Tipoensayo();
+        $identMuestra               = array();
 
+        $this->user                 = Load::model('usuario')->find(Session::get('usuario_id'));
         $this->formato              = $formato->find_first("id=$id");
-        $this->muestras             = $muestra->CargarMuestrasXFormatoId($id);
-        $this->acidez               = $tipoEnsayo->CargarAcidez();
-        $this->alcalinidadRangoBajo = $tipoEnsayo->CargarAlcalinidadRangoBajo();
-        $this->alcalinidad          = $tipoEnsayo->CargarAlcalinidad();
-        $this->durezaTotal          = $tipoEnsayo->CargarDurezaTotal();
-        $this->durezaCalcica        = $tipoEnsayo->CargarDurezaCalcica();
-        $this->varios               = $tipoEnsayo->CargarVarios();
-        $this->cloruros             = $tipoEnsayo->CargarCloruros();
-        $this->microbiologia        = $tipoEnsayo->CargarMicrobiologia();
-        $this->identMuestra         = $this->genIndicadores($this->muestras);
-        
-        //datos
-        
-        
+
+        if ($this->formato->estado == 0 && $this->user->tipousuario_id == 1) {
+            Router::redirect("home/seltipoensayo/$id");
+        } else {
+            $this->muestras             = $muestra->CargarMuestrasXFormatoId($id);
+            $this->acidez               = $tipoEnsayo->CargarAcidez();
+            $this->alcalinidadRangoBajo = $tipoEnsayo->CargarAlcalinidadRangoBajo();
+            $this->alcalinidad          = $tipoEnsayo->CargarAlcalinidad();
+            $this->durezaTotal          = $tipoEnsayo->CargarDurezaTotal();
+            $this->durezaCalcica        = $tipoEnsayo->CargarDurezaCalcica();
+            $this->varios               = $tipoEnsayo->CargarVarios();
+            $this->cloruros             = $tipoEnsayo->CargarCloruros();
+            $this->microbiologia        = $tipoEnsayo->CargarMicrobiologia();
+            $this->identMuestra         = $this->genIndicadores($this->muestras);
+        }
+
+
+        // $formato      = new Formato();
+        // $muestra      = new Muestra();
+        // $tipoEnsayo   = new Tipoensayo();
+        // $identMuestra = array();
+
+        // $this->formato              = $formato->find_first("id=$id");
+        // $this->muestras             = $muestra->CargarMuestrasXFormatoId($id);
+        // $this->acidez               = $tipoEnsayo->CargarAcidez();
+        // $this->alcalinidadRangoBajo = $tipoEnsayo->CargarAlcalinidadRangoBajo();
+        // $this->alcalinidad          = $tipoEnsayo->CargarAlcalinidad();
+        // $this->durezaTotal          = $tipoEnsayo->CargarDurezaTotal();
+        // $this->durezaCalcica        = $tipoEnsayo->CargarDurezaCalcica();
+        // $this->varios               = $tipoEnsayo->CargarVarios();
+        // $this->cloruros             = $tipoEnsayo->CargarCloruros();
+        // $this->microbiologia        = $tipoEnsayo->CargarMicrobiologia();
+        // $this->identMuestra         = $this->genIndicadores($this->muestras);
+
+        set_time_limit(0);
     }
 
     public function lista()
     {
         $formato = new Formato();
 
-        $this->formatos = $formato->find('order: id desc');
+        $this->formatos = $formato->find('estado<4', 'order: id desc');
     }
 
-    public function lista_reporte($cliente_id)
+    public function lista_reporte($cliente_id=0)
     {
-        
         $formato = new Formato();
 
         if($cliente_id<>0){
-            $this->formatos = $formato->find('cliente_id='.$cliente_id,'order: id desc');
-        }else{  
-            $this->formatos = $formato->find('order: id desc');
+            $this->formatos = $formato->find("cliente_id=$cliente_id AND estado=4", 'order: id desc');
+        }else{
+            $this->formatos = $formato->find('estado=4', 'order: id desc');
         }
     }
 
@@ -374,5 +396,106 @@ class FormatoController extends AppController
         }
 
         return $ptoRiesgo / $totalRiesgo;
+    }
+
+    public function actualizar_estado()
+    {
+        $formato = Load::model('formato')->find($_POST['formato_id']);
+
+        if ($formato) {
+            $usuario_id     = $_POST['usuario_id'];
+            $tipousuario_id = $_POST['tipousuario_id'];
+
+            if ($formato->estado == 1 && $tipousuario_id == 1) {
+                $formato->estado = 2;
+            } else if ($formato->estado == 2 && $tipousuario_id == 1) {
+                if (!$formato->usuario_id_1) {
+                    $formato->usuario_id_1 = $usuario_id;
+                } else if ($formato->usuario_id_1 != $usuario_id) {
+                    $formato->usuario_id_2 = $usuario_id;
+                    $formato->estado = 3;
+                }
+            } else if ($formato->estado == 3 && $tipousuario_id == 3) {
+                $formato->estado = 4;
+            }
+
+            $formato->save();
+        }
+
+        View::template(null);
+    }
+
+    public function reporte_promedio()
+    {
+        $curYear = date('Y');
+        $years   = array();
+        $months  = array(
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto',
+            'Septiembre',
+            'Octubre',
+            'Noviembre',
+            'Diciembre'
+        );
+
+        for ($i=2010; $i <= $curYear; $i++) {
+            $years[] = $i;
+        }
+
+        $this->years       = $years;
+        $this->months      = $months;
+        $this->tipoReporte = 1;
+        $this->titulo      = "Reporte promedio mes";
+    }
+
+    public function reporte_sui()
+    {
+        $curYear = date('Y');
+        $years   = array();
+        $months  = array(
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto',
+            'Septiembre',
+            'Octubre',
+            'Noviembre',
+            'Diciembre'
+        );
+
+        for ($i=2010; $i <= $curYear; $i++) {
+            $years[] = $i;
+        }
+
+        $this->years       = $years;
+        $this->months      = $months;
+        $this->tipoReporte = 2;
+        $this->titulo      = "Reporte SUI Red mes";
+
+        View::select('reporte_promedio');
+    }
+
+    public function reporte_gen()
+    {
+        if ($_POST['tipo-reporte']) {
+            View::select($_POST['tipo-reporte'] == 1 ? 'reporte_promedio_gen' : 'reporte_sui_gen');
+            $month = $_POST['month'] + 1;
+            $year  = $_POST['year'] + 2010;
+
+            $fechaini = "$year-".(strlen("0".$month)   > 2 ? $month   : "0".$month)."-01";
+            $fechafin = "$year-".(strlen("0".$month+1) > 2 ? $month+1 : "0".($month+1))."-01";
+
+            $this->formatos = Load::model('formato')->find("tipocliente_id=1 AND fechaemision>=$fechaini AND fechaemision<$fechafin");
+        }
     }
 }

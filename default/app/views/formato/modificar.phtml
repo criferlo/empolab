@@ -1,10 +1,10 @@
-
-            
-
 <div class="container">
-  <div class="col-md-1 pull-right">
-              <button id="btnGuardarMemoria" class="btn btn-primary pull-right">Guardar memoría</button>
-            </div>
+  <div class="col-md-12 text-right">
+    <button id="btnGuardarMemoria" class="btn btn-primary">Guardar memoría</button>
+    <?php if ($formato->estado > 1 && ($user->tipousuario_id == 1 || $user->tipousuario_id == 3)): ?>
+      <button id="btnVistoBno" class="btn btn-success">Dar visto bueno</button>
+    <?php endif ?>
+  </div>
   <h2>Memoria de calculo</h2>
   <ul class="nav nav-tabs">
     <li class="active"><a href="#datos">Datos</a></li>
@@ -256,36 +256,31 @@ echo 'formato_id='.$formato->id.";";
 
         $('#btnGuardarMemoria').on('click', function (e) {
             e.preventDefault();
-            
+
             //eliminar lo que hay
-            
             arrayDataEliminar=[];
-            
             for(i=0;i<muestras_ids.length;i++){
                 var dataeliminar = {
-                    muestra_id:muestras_ids[i],                    
+                    muestra_id: muestras_ids[i],
                 }
                 arrayDataEliminar.push(dataeliminar);
             }
-            
-            
+
             $.ajax({
                 url: '<?php echo PUBLIC_PATH ?>memoriarest/0',
                 type: 'DELETE',
                 contentType: 'application/json',
                 data: JSON.stringify(arrayDataEliminar)
             }).done(function (data)
-            {                
+            {
                 //alert("Datos enviados con éxito");
                 //window.location = "formato/modificar/" + formato_id;
             }).complete(function (data) {
                         //alert("hola");
-                        alert("Datos eliminados con éxito");
+                        // alert("Datos eliminados con éxito");
                         //window.location = "../modificar/" + formato_id;
-                        
                     });
-            
-            
+
             var ajaxCalls = [];
             var functions = [];
             var functions = [
@@ -302,7 +297,7 @@ echo 'formato_id='.$formato->id.";";
                 GenerateJsonDurezaMagnesio,
                 GenerateJsonMagnesio
             ];
-           
+
             arrayData = [];
             muestras_ids.forEach(function (muestra_id) {
                 tipoEnsayo.forEach(function (tipoEnsayo_id) {
@@ -313,7 +308,7 @@ echo 'formato_id='.$formato->id.";";
                         tipoEnsayo_id, ']'
                     ].join(''));
 
-                    if (input && tipoEnsayo_id != 2) {                        
+                    if (input && tipoEnsayo_id != 2) {
                         data = {
                             muestra_id: muestra_id,
                             tipoensayo_id: tipoEnsayo_id,
@@ -324,31 +319,60 @@ echo 'formato_id='.$formato->id.";";
                     }
                 });
 
-                functions.forEach(function (fn) {                   
+                functions.forEach(function (fn) {
                     data = 
                         fn(muestra_id)
                     ;
                     arrayData.push(data);
                     //}));
                 });
-                
-            });            
+            });
 
             $.ajax({
-                url: '<?php echo PUBLIC_PATH ?>memoriarest/',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(arrayData)
+              url: '<?php echo PUBLIC_PATH ?>memoriarest/',
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(arrayData)
             }).done(function (data)
-            {                
-                alert("Datos enviados con éxito");
-                //window.location = "formato/modificar/" + formato_id;
+            {
+              alert("Datos enviados con éxito");
+              //window.location = "formato/modificar/" + formato_id;
             }).complete(function (data) {
-                        //alert("hola");
-                        alert("Datos enviados con éxito");
-                        window.location = "../modificar/" + formato_id;
-                        
-                    });
+              //alert("hola");
+              if (<?php echo $formato->estado?> == 1) {
+                $.ajax({
+                  url: "<?php echo PUBLIC_PATH ?>formato/actualizar_estado",
+                  method: 'POST',
+                  data: {
+                    formato_id: "<?php echo $formato->id ?>",
+                    usuario_id: "<?php echo $user->id ?>",
+                    tipousuario_id: "<?php echo $user->tipousuario_id ?>"
+                  }
+                });
+              };
+              alert("Datos enviados con éxito");
+              window.location = "../modificar/" + formato_id;
+            });
         });
+
+
+        $('#btnVistoBno').on('click', function(e) {
+          e.preventDefault();
+
+          $.ajax({
+            url: "<?php echo PUBLIC_PATH ?>formato/actualizar_estado",
+            method: 'POST',
+            data: {
+              formato_id: "<?php echo $formato->id ?>",
+              usuario_id: "<?php echo $user->id ?>",
+              tipousuario_id: "<?php echo $user->tipousuario_id ?>"
+            },
+            success: function(result) {
+              alert('Visto bueno almacenado correctamente');
+            },
+            error: function(error) {}
+          });
+        });
+
     });
 </script>
