@@ -2,7 +2,7 @@
 function UbicarFilaTipoEnsayo($sheet, $tipoEnsayo)
 {
   for ($i=25; $i < 200; $i++) {
-    if ($sheet->getCell("A$i")->getValue() == $tipoEnsayo) {
+    if (trim($sheet->getCell("A$i")->getValue()) == $tipoEnsayo) {
       return $i;
     }
   }
@@ -15,24 +15,36 @@ function cargarReportesDia($formato)
   return $formato;
 }
 
-function calcularPromedio($sheet, $colIni, $colFin, $fila)
+function calcularPromedio($sheet, $destSheet, $colIni, $colFin, $fila)
 {
   $numItems   = 0;
   $turbiedad  = 0;
-  $resultados = array();
+  $resultados = array(
+    "B" => 0,
+    "C" => 0,
+    "D" => 0,
+    "E" => 0,
+    "F" => 0,
+    "G" => 0,
+    "H" => 0,
+    "I" => 0,
+    "J" => 0,
+    "K" => 0,
+    "L" => 0,
+    "M" => 0,
+    "N" => 0,
+    "O" => 0,
+    "P" => 0
+  );
 
   $rowTURBIEDAD = UbicarFilaTipoEnsayo($sheet, "TURBIEDAD");
   $rowCOLOR_APARENTE = UbicarFilaTipoEnsayo($sheet, "COLOR APARENTE");
 
-  $rowOLOR = UbicarFilaTipoEnsayo($sheet, "OLOR");
-  $rowSABOR = UbicarFilaTipoEnsayo($sheet, "SABOR");
-  $rowSUSTANCIAS_FLOTANTES = UbicarFilaTipoEnsayo($sheet, "SUSTANCIAS_FLOTANTES");
-
-  $rowCONDUCTIVIDAD = UbicarFilaTipoEnsayo($sheet, "CONDUCTIVIDAD");
-  $rowALCALINIDAD = UbicarFilaTipoEnsayo($sheet, "ALCALINIDAD");
-  $rowDUREZA = UbicarFilaTipoEnsayo($sheet, "DUREZA");
+  $rowCONDUCTIVIDAD = UbicarFilaTipoEnsayo($sheet, "CONDUCTIVIDAD ELÉCTRICA");
+  $rowALCALINIDAD = UbicarFilaTipoEnsayo($sheet, "ALCALINIDAD TOTAL");
+  $rowDUREZA = UbicarFilaTipoEnsayo($sheet, "DUREZA TOTAL");
   $rowpH = UbicarFilaTipoEnsayo($sheet, "PH");
-  $rowHIERRO = UbicarFilaTipoEnsayo($sheet, "HIERRO");
+  $rowHIERRO = UbicarFilaTipoEnsayo($sheet, "HIERRO TOTAL");
   $rowCLORUROS = UbicarFilaTipoEnsayo($sheet, "CLORUROS");
   $rowSULFATOS = UbicarFilaTipoEnsayo($sheet, "SULFATOS");
   $rowNITRITOS = UbicarFilaTipoEnsayo($sheet, "NITRITOS");
@@ -48,9 +60,11 @@ function calcularPromedio($sheet, $colIni, $colFin, $fila)
 
     if (isset($rowTURBIEDAD)) { $resultados["B"] += $resultados["B"] + $sheet->getCell($i.$rowTURBIEDAD) ->getValue(); }
     if (isset($rowCOLOR_APARENTE)) { $resultados["C"] += $resultados["C"] + $sheet->getCell($i.$rowCOLOR_APARENTE) ->getValue(); }
-    if (isset($rowOLOR)) { $resultados["D"] += $resultados["D"] + $sheet->getCell($i.$rowOLOR) ->getValue(); }
-    if (isset($rowSABOR)) { $resultados["E"] += $resultados["E"] + $sheet->getCell($i.$rowSABOR) ->getValue(); }
-    if (isset($rowSUSTANCIAS_FLOTANTES)) { $resultados["F"] += $resultados["F"] + $sheet->getCell($i.$rowSUSTANCIAS_FLOTANTES) ->getValue(); }
+
+    if (isset($rowCONDUCTIVIDAD)) { $resultados["G"] += $resultados["G"] + $sheet->getCell($i.$rowCONDUCTIVIDAD) ->getValue(); }
+    if (isset($rowALCALINIDAD)) { $resultados["H"] += $resultados["H"] + $sheet->getCell($i.$rowALCALINIDAD) ->getValue(); }
+    if (isset($rowDUREZA)) { $resultados["I"] += $resultados["I"] + $sheet->getCell($i.$rowDUREZA) ->getValue(); }
+
     if (isset($rowpH)) { $resultados["J"] += $resultados["J"] + $sheet->getCell($i.$rowpH) ->getValue(); }
     if (isset($rowHIERRO)) { $resultados["K"] += $resultados["K"] + $sheet->getCell($i.$rowHIERRO) ->getValue(); }
     if (isset($rowCLORUROS)) { $resultados["L"] += $resultados["L"] + $sheet->getCell($i.$rowCLORUROS) ->getValue(); }
@@ -63,31 +77,29 @@ function calcularPromedio($sheet, $colIni, $colFin, $fila)
     }
   }
 
-  $resultados["G"] = "ACEPTABLE";
-  $resultados["H"] = "ACEPTABLE";
-  $resultados["I"] = "AUSENTES";
+  $resultados["D"] = "ACEPTABLE";
+  $resultados["E"] = "ACEPTABLE";
+  $resultados["F"] = "AUSENTES";
 
   foreach ($resultados as $key => $value) {
-    if ($key != "G" && $key != "H" && $key != "I" && $key != "O" && $key != "P") {
+    if ($key != "D" && $key != "E" && $key != "F" && $key != "O" && $key != "P") {
       $resultados[$key] = $value / $numItems;
     }
 
-    $sheet->setCellValue("$key$fila", $value);
+    $destSheet->setCellValue("$key$fila", $value);
   }
 }
 
 function generarResumen($book)
 {
-  $posIrca = 2;
-
   for ($i=1; $i <=31 ; $i++) {
     if ($book->sheetNameExists("$i")) {
-      $currentSheet = $book->getSheet($i + 3);
-      $dia          = $currentSheet->getTitle();
+      $currentSheet = $book->getSheetByName("$i");
+      $dia          = $i;
 
-      calcularPromedio($book->getSheet(0), "Q", "T", $i);
-      calcularPromedio($book->getSheet(1), "U", "V", $i);
-      calcularPromedio($book->getSheet(2), "W", "X", $i);
+      calcularPromedio($currentSheet, $book->getSheetByName('CENTENARIO'), "Q", "T", $i);
+      calcularPromedio($currentSheet, $book->getSheetByName('MIJITAYO'), "U", "V", $i);
+      calcularPromedio($currentSheet, $book->getSheetByName('SAN FELIPE'), "W", "X", $i);
 
       $filaIrca = UbicarFilaTipoEnsayo($currentSheet, "IRCA");
 
@@ -95,14 +107,14 @@ function generarResumen($book)
         $valor = 0;
 
         for ($col="Q"; $col <= "X" ; $col++) {
-          $valor += $currentSheet->getCell($col.$filaIrca)->getValue();
+          $valor += $currentSheet->getCell("$col$filaIrca")->getValue();
         }
 
-        $book->getSheetByName("IRCA")
-          ->setCellValue("A$posIrca", $dia)
-          ->setCellValue("B$posIrca", $valor);
+        $filaIrca = $i + 1;
 
-        $posIrca += 1;
+        $book->getSheetByName("IRCA")
+          ->setCellValue("A$filaIrca", $dia)
+          ->setCellValue("B$filaIrca", $valor);
       }
     }
   }
@@ -140,3 +152,6 @@ $nombre = 'promedios/promedio.xlsx';
 $objWriter = PHPExcel_IOFactory::createWriter($book, 'Excel2007');
 $objWriter->save($nombre);
 ?>
+<div class="container">
+  <a href="<?php echo PUBLIC_PATH.$nombre ?>" class="btn btn-link">Descargar el reporte</a>
+</div>
