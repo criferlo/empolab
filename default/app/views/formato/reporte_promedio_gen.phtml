@@ -133,16 +133,10 @@ if (PHP_SAPI == 'cli')
 
 $objPHPExcel = PHPExcel_IOFactory::load(APP_PATH . '/extensions/formats/promedio_red.xlsx');
 
-// $codigo = '0000' . $formato->codigoinformesecuencial;
-// $formato->codigo = $formato->codigoinformeleyenda . ' ' . $formato->codigoinformeano . '-' . substr($codigo, -4);
-
 $objPHPExcel->getDefaultStyle()->getFont()
         ->setName('Arial')
         ->setSize(16)
         ->setBold(false);
-
-$newSheet = $objPHPExcel->getActiveSheet();
-// $newSheet->setTitle($codigo);
 
 $book = cargarReportesDia($objPHPExcel);
 generarResumen($book);

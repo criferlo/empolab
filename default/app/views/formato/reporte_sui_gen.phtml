@@ -2,7 +2,7 @@
 function UbicarFilaTipoEnsayo($sheet, $tipoEnsayo)
 {
   for ($i=25; $i < 200; $i++) {
-    if ($sheet->getCell("A$i")->getValue() == $tipoEnsayo) {
+    if (trim($sheet->getCell("A$i")->getValue()) == $tipoEnsayo) {
       return $i;
     }
   }
@@ -15,24 +15,36 @@ function cargarReportesDia($formato)
   return $formato;
 }
 
-function calcularPromedio($sheet, $colIni, $colFin, $fila)
+function calcularPromedio($sheet, $destSheet, $colIni, $colFin, $fila)
 {
   $numItems   = 0;
   $turbiedad  = 0;
-  $resultados = array();
+  $resultados = array(
+    "B" => 0,
+    "C" => 0,
+    "D" => 0,
+    "E" => 0,
+    "F" => 0,
+    "G" => 0,
+    "H" => 0,
+    "I" => 0,
+    "J" => 0,
+    "K" => 0,
+    "L" => 0,
+    "M" => 0,
+    "N" => 0,
+    "O" => 0,
+    "P" => 0
+  );
 
   $rowTURBIEDAD = UbicarFilaTipoEnsayo($sheet, "TURBIEDAD");
   $rowCOLOR_APARENTE = UbicarFilaTipoEnsayo($sheet, "COLOR APARENTE");
 
-  $rowOLOR = UbicarFilaTipoEnsayo($sheet, "OLOR");
-  $rowSABOR = UbicarFilaTipoEnsayo($sheet, "SABOR");
-  $rowSUSTANCIAS_FLOTANTES = UbicarFilaTipoEnsayo($sheet, "SUSTANCIAS_FLOTANTES");
-
-  $rowCONDUCTIVIDAD = UbicarFilaTipoEnsayo($sheet, "CONDUCTIVIDAD");
-  $rowALCALINIDAD = UbicarFilaTipoEnsayo($sheet, "ALCALINIDAD");
-  $rowDUREZA = UbicarFilaTipoEnsayo($sheet, "DUREZA");
+  $rowCONDUCTIVIDAD = UbicarFilaTipoEnsayo($sheet, "CONDUCTIVIDAD ELÉCTRICA");
+  $rowALCALINIDAD = UbicarFilaTipoEnsayo($sheet, "ALCALINIDAD TOTAL");
+  $rowDUREZA = UbicarFilaTipoEnsayo($sheet, "DUREZA TOTAL");
   $rowpH = UbicarFilaTipoEnsayo($sheet, "PH");
-  $rowHIERRO = UbicarFilaTipoEnsayo($sheet, "HIERRO");
+  $rowHIERRO = UbicarFilaTipoEnsayo($sheet, "HIERRO TOTAL");
   $rowCLORUROS = UbicarFilaTipoEnsayo($sheet, "CLORUROS");
   $rowSULFATOS = UbicarFilaTipoEnsayo($sheet, "SULFATOS");
   $rowNITRITOS = UbicarFilaTipoEnsayo($sheet, "NITRITOS");
@@ -48,9 +60,11 @@ function calcularPromedio($sheet, $colIni, $colFin, $fila)
 
     if (isset($rowTURBIEDAD)) { $resultados["B"] += $resultados["B"] + $sheet->getCell($i.$rowTURBIEDAD) ->getValue(); }
     if (isset($rowCOLOR_APARENTE)) { $resultados["C"] += $resultados["C"] + $sheet->getCell($i.$rowCOLOR_APARENTE) ->getValue(); }
-    if (isset($rowOLOR)) { $resultados["D"] += $resultados["D"] + $sheet->getCell($i.$rowOLOR) ->getValue(); }
-    if (isset($rowSABOR)) { $resultados["E"] += $resultados["E"] + $sheet->getCell($i.$rowSABOR) ->getValue(); }
-    if (isset($rowSUSTANCIAS_FLOTANTES)) { $resultados["F"] += $resultados["F"] + $sheet->getCell($i.$rowSUSTANCIAS_FLOTANTES) ->getValue(); }
+
+    if (isset($rowCONDUCTIVIDAD)) { $resultados["G"] += $resultados["G"] + $sheet->getCell($i.$rowCONDUCTIVIDAD) ->getValue(); }
+    if (isset($rowALCALINIDAD)) { $resultados["H"] += $resultados["H"] + $sheet->getCell($i.$rowALCALINIDAD) ->getValue(); }
+    if (isset($rowDUREZA)) { $resultados["I"] += $resultados["I"] + $sheet->getCell($i.$rowDUREZA) ->getValue(); }
+
     if (isset($rowpH)) { $resultados["J"] += $resultados["J"] + $sheet->getCell($i.$rowpH) ->getValue(); }
     if (isset($rowHIERRO)) { $resultados["K"] += $resultados["K"] + $sheet->getCell($i.$rowHIERRO) ->getValue(); }
     if (isset($rowCLORUROS)) { $resultados["L"] += $resultados["L"] + $sheet->getCell($i.$rowCLORUROS) ->getValue(); }
@@ -63,52 +77,194 @@ function calcularPromedio($sheet, $colIni, $colFin, $fila)
     }
   }
 
-  $resultados["G"] = "ACEPTABLE";
-  $resultados["H"] = "ACEPTABLE";
-  $resultados["I"] = "AUSENTES";
+  $resultados["D"] = "ACEPTABLE";
+  $resultados["E"] = "ACEPTABLE";
+  $resultados["F"] = "AUSENTES";
 
   foreach ($resultados as $key => $value) {
-    if ($key != "G" && $key != "H" && $key != "I" && $key != "O" && $key != "P") {
+    if ($key != "D" && $key != "E" && $key != "F" && $key != "O" && $key != "P") {
       $resultados[$key] = $value / $numItems;
     }
 
-    $sheet->setCellValue("$key$fila", $value);
+    $destSheet->setCellValue("$key$fila", $value);
   }
 }
 
+function calcularBasicasR4($sheet, $destSheet)
+{
+  $row         = $destSheet->getHighestRow();
+  $colMuestras = array(
+    0 => "Q",
+    1 => "R",
+    2 => "S",
+    3 => "T",
+    4 => "U",
+    5 => "V",
+    6 => "W",
+    7 => "X"
+  );
+
+  for ($i=0; $i < 8; $i++) {
+    $row += 1;
+
+    $fechaTomaMuestra    = $sheet->getCell("C".($i + 15))->getFormattedValue();
+    $horaTomaMuestra     = $sheet->getCell("A".($i + 15))->getFormattedValue();
+    $fechaEntregaMuestra = $sheet->getCell("I".($i + 15))->getFormattedValue();
+    $codigoMuestra       = $sheet->getCell("P".($i + 15))->getFormattedValue();
+
+    $colorAparente = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "COLOR APARENTE"))->getFormattedValue();
+    $turbiedad = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "TURBIEDAD"))->getFormattedValue();
+    $ph = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "PH"))->getFormattedValue();
+    $cloroResidual = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "CLORO RESIDUAL"))->getFormattedValue();
+    $durezaTotal = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "DUREZA TOTAL"))->getFormattedValue();
+    $hierroTotal = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "HIERRO TOTAL"))->getFormattedValue();
+    $cloruros = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "CLORUROS"))->getFormattedValue();
+    $alcalinidad = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "ALCALINIDAD TOTAL"))->getFormattedValue();
+    $sulfatos = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "SULFATOS"))->getFormattedValue();
+    $nitratos = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "NITRATOS"))->getFormattedValue();
+    $coliformes = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "COLIFORMES TOTALES"))->getFormattedValue();
+    $tecnicaColiformes = 3;
+    $escherichiaColi = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "ESCHERICHIA COLI"))->getFormattedValue();
+    $tecnicaEscherichiaColi = 3;
+    $Irca = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "IRCA"))->getFormattedValue();
+
+    $destSheet->setCellValue("A$row", $fechaTomaMuestra);
+    $destSheet->setCellValue("B$row", $horaTomaMuestra);
+    $destSheet->setCellValue("C$row", $fechaEntregaMuestra);
+    $destSheet->setCellValue("D$row", $codigoMuestra);
+
+    $destSheet->setCellValue("E$row", $sheet->getTitle()."-".$i);
+    $destSheet->setCellValue("F$row", 37);
+    $destSheet->setCellValue("G$row", 2);
+    $destSheet->setCellValue("H$row", 2);
+    $destSheet->setCellValue("I$row", $colorAparente);
+    $destSheet->setCellValue("J$row", $turbiedad);
+    $destSheet->setCellValue("K$row", $ph);
+    $destSheet->setCellValue("L$row", $cloroResidual);
+    $destSheet->setCellValue("M$row", $durezaTotal);
+    $destSheet->setCellValue("N$row", $hierroTotal);
+    $destSheet->setCellValue("O$row", $cloruros);
+    $destSheet->setCellValue("P$row", $alcalinidad);
+    $destSheet->setCellValue("Q$row", $sulfatos);
+    $destSheet->setCellValue("R$row", $nitratos);
+    $destSheet->setCellValue("S$row", $coliformes);
+    $destSheet->setCellValue("T$row", $tecnicaColiformes);
+    $destSheet->setCellValue("U$row", $escherichiaColi);
+    $destSheet->setCellValue("V$row", $tecnicaEscherichiaColi);
+    $destSheet->setCellValue("W$row", $Irca);
+  }
+}
+
+function calcularCarNobligator($sheet, $destSheet)
+{
+  $row         = $destSheet->getHighestRow();
+  $colMuestras = array(
+    0 => "Q",
+    1 => "R",
+    2 => "S",
+    3 => "T",
+    4 => "U",
+    5 => "V",
+    6 => "W",
+    7 => "X"
+  );
+  $codTipoMuestras = array(
+    15 => "NITRITOS",
+    19 => "ALCALINIDAD TOTAL",
+    25 => "SULFATOS",
+    29 => "DUREZA TOTAL",
+    30 => "HIERRO TOTAL",
+    28 => "ALUMINIO RESIDUAL"
+  );
+
+  for ($i=0; $i < 8; $i++) {
+    $fechaTomaMuestra    = $sheet->getCell("C".($i + 15))->getFormattedValue();
+    $horaTomaMuestra     = $sheet->getCell("A".($i + 15))->getFormattedValue();
+    $fechaEntregaMuestra = $sheet->getCell("I".($i + 15))->getFormattedValue();
+    $codigoMuestra       = $sheet->getCell("P".($i + 15))->getFormattedValue();
+
+    foreach ($codTipoMuestras as $key => $value) {
+      $row += 1;
+
+
+      $destSheet->setCellValue("A$row", $fechaTomaMuestra);
+      $destSheet->setCellValue("B$row", $horaTomaMuestra);
+      $destSheet->setCellValue("C$row", $fechaEntregaMuestra);
+      $destSheet->setCellValue("D$row", $codigoMuestra);
+
+      $destSheet->setCellValue("E$row", 2);
+      $destSheet->setCellValue("F$row", $sheet->getTitle()."-".$i);
+      $destSheet->setCellValue("G$row", 37);
+      $destSheet->setCellValue("H$row", 2);
+      $destSheet->setCellValue("I$row", 2);
+
+      $destSheet->setCellValue("J$row", $key);
+      $destSheet->setCellValue("K$row", $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, $value))->getFormattedValue());
+    }
+  }
+}
+
+function calcularCarEspe($sheet, $destSheet)
+{
+  $row         = $destSheet->getHighestRow();
+  $colMuestras = array(
+    0 => "Q",
+    1 => "R",
+    2 => "S",
+    3 => "T",
+    4 => "U",
+    5 => "V",
+    6 => "W",
+    7 => "X"
+  );
+
+  for ($i=0; $i < 8; $i++) {
+    $row += 1;
+
+    $fechaTomaMuestra    = $sheet->getCell("C".($i + 15))->getFormattedValue();
+    $horaTomaMuestra     = $sheet->getCell("A".($i + 15))->getFormattedValue();
+    $fechaEntregaMuestra = $sheet->getCell("I".($i + 15))->getFormattedValue();
+    $codigoMuestra       = $sheet->getCell("P".($i + 15))->getFormattedValue();
+
+    $aluminioResidual = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "ALUMINIO RESIDUAL"))->getFormattedValue();
+    $cot = "";
+    $nitritos = $sheet->getCell($colMuestras[$i].UbicarFilaTipoEnsayo($sheet, "NITRITOS"))->getFormattedValue();
+    $fluoruros = "";
+    $giardia = "";
+    $crypstosporidum = "";
+
+    $destSheet->setCellValue("A$row", $fechaTomaMuestra);
+    $destSheet->setCellValue("B$row", $horaTomaMuestra);
+    $destSheet->setCellValue("C$row", $fechaEntregaMuestra);
+    $destSheet->setCellValue("D$row", $codigoMuestra);
+
+    $destSheet->setCellValue("E$row", $sheet->getTitle()."-".$i);
+    $destSheet->setCellValue("F$row", 37);
+    $destSheet->setCellValue("G$row", 2);
+    $destSheet->setCellValue("H$row", 2);
+    $destSheet->setCellValue("I$row", $aluminioResidual);
+    $destSheet->setCellValue("J$row", $cot);
+    $destSheet->setCellValue("K$row", $nitritos);
+    $destSheet->setCellValue("L$row", $fluoruros);
+    $destSheet->setCellValue("M$row", $giardia);
+    $destSheet->setCellValue("N$row", $crypstosporidum);
+  }
+}
+
+
 function generarResumen($book)
 {
-  $posIrca = 2;
-
   for ($i=1; $i <=31 ; $i++) {
     if ($book->sheetNameExists("$i")) {
-      $currentSheet = $book->getSheet($i + 3);
-      $dia          = $currentSheet->getTitle();
+      $currentSheet = $book->getSheetByName("$i");
 
-      calcularPromedio($book->getSheet(0), "Q", "T", $i);
-      calcularPromedio($book->getSheet(1), "U", "V", $i);
-      calcularPromedio($book->getSheet(2), "W", "X", $i);
-
-      $filaIrca = UbicarFilaTipoEnsayo($currentSheet, "IRCA");
-
-      if (isset($filaIrca)) {
-        $valor = 0;
-
-        for ($col="Q"; $col <= "X" ; $col++) {
-          $valor += $currentSheet->getCell($col.$filaIrca)->getValue();
-        }
-
-        $book->getSheetByName("IRCA")
-          ->setCellValue("A$posIrca", $dia)
-          ->setCellValue("B$posIrca", $valor);
-
-        $posIrca += 1;
-      }
+      calcularBasicasR4($currentSheet, $book->getSheetByName('BASICAS R4'));
+      calcularCarNobligator($currentSheet, $book->getSheetByName('CAR.NOBLIGATOR'));
+      calcularCarEspe($currentSheet, $book->getSheetByName('CAR.ESPE'));
     }
   }
 }
 ?>
-
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
@@ -119,24 +275,21 @@ set_time_limit(0);
 if (PHP_SAPI == 'cli')
     die('Este reporte solo se puede ejecutar desde un navegador web');
 
-$objPHPExcel = PHPExcel_IOFactory::load(APP_PATH . '/extensions/formats/promedio_red.xlsx');
-
-// $codigo = '0000' . $formato->codigoinformesecuencial;
-// $formato->codigo = $formato->codigoinformeleyenda . ' ' . $formato->codigoinformeano . '-' . substr($codigo, -4);
+$objPHPExcel = PHPExcel_IOFactory::load(APP_PATH . '/extensions/formats/sui_red.xlsx');
 
 $objPHPExcel->getDefaultStyle()->getFont()
         ->setName('Arial')
         ->setSize(16)
         ->setBold(false);
 
-$newSheet = $objPHPExcel->getActiveSheet();
-// $newSheet->setTitle($codigo);
-
 $book = cargarReportesDia($objPHPExcel);
 generarResumen($book);
 
-$nombre = 'promedios/promedio.xlsx';
+$nombre = 'sui/sui.xlsx';
 
 $objWriter = PHPExcel_IOFactory::createWriter($book, 'Excel2007');
 $objWriter->save($nombre);
 ?>
+<div class="container">
+  <a href="<?php echo PUBLIC_PATH.$nombre ?>" class="btn btn-link">Descargar el reporte</a>
+</div>
